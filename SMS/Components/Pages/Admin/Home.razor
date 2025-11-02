@@ -1,22 +1,18 @@
-@page "/admin-home"
+﻿@page "/admin-home"
 @using SMS.Models
 @using Microsoft.EntityFrameworkCore
-@using Microsoft.Extensions.Localization
-@using SMS.Resources
-@using SMS
-@using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject IDbContextFactory<SMS.CimContext> DbFactory
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@rendermode InteractiveServer
 
-<PageTitle>Home - SMS Platform</PageTitle>
+<PageTitle>主页 - SMS平台</PageTitle>
 
 @if (isLoading)
 {
     <div style="display: flex; justify-content: center; align-items: center; height: 400px;">
         <AntDesign.Spin Size="@AntDesign.SpinSize.Large" />
-        <span style="margin-left: 16px; color: #666;">Loading data...</span>
+        <span style="margin-left: 16px; color: #666;">正在加载数据...</span>
     </div>
 }
 else if (!isAuthenticated)
@@ -24,20 +20,9 @@ else if (!isAuthenticated)
     <div style="display: flex; justify-content: center; align-items: center; height: 400px;">
         <div style="text-align: center;">
             <AntDesign.Alert Type="@AntDesign.AlertType.Error" 
-                           Message="Authentication Failed" 
-                           Description="You do not have permission to access this page or your login has expired. Redirecting to login page..." 
+                           Message="认证失败" 
+                           Description="您没有权限访问此页面或登录已过期，正在跳转到登录页面..." 
                            ShowIcon="true" />
-            
-            <!-- 调试信息 -->
-            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 16px; margin-top: 16px; text-align: left; font-family: monospace; font-size: 12px;">
-                <h5>Debug Information:</h5>
-                <p><strong>userRole:</strong> "@debugUserRole"</p>
-                <p><strong>userName:</strong> "@debugUserName"</p>
-                <p><strong>userRole == "2":</strong> @(debugUserRole == "2")</p>
-                <p><strong>!string.IsNullOrEmpty(userName):</strong> @(!string.IsNullOrEmpty(debugUserName))</p>
-                <p><strong>Both conditions met:</strong> @(debugUserRole == "2" && !string.IsNullOrEmpty(debugUserName))</p>
-                <p><strong>Error Message:</strong> @debugErrorMessage</p>
-            </div>
         </div>
     </div>
 }
@@ -46,7 +31,7 @@ else if (!string.IsNullOrEmpty(lastExceptionMessage))
     <div style="display: flex; justify-content: center; align-items: center; height: 400px;">
         <div style="text-align: center;">
             <AntDesign.Alert Type="@AntDesign.AlertType.Error" 
-                           Message="Error occurred while loading data" 
+                           Message="加载数据时出现错误" 
                            Description="@lastExceptionMessage" 
                            ShowIcon="true" />
         </div>
@@ -56,24 +41,25 @@ else if (isAuthenticated)
 {
     <!-- 欢迎横幅 -->
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 32px; border-radius: 16px; margin-bottom: 32px; color: white;">
-        <h1 id="welcome-title" style="margin: 0 0 8px 0; font-size: 28px; font-weight: 600; color: white;">Welcome back，@currentUser！</h1>
+    <h1 style="margin: 0 0 8px 0; font-size: 28px; font-weight: 600; color: white;">欢迎回来，@currentUser！</h1>
     </div>
+
 
     <!-- 数据统计面板 -->
     <div style="margin-bottom: 32px;">
         
         <div class="intro-container" style="margin-bottom: 24px;">
-            <div>
-                <h4 id="system-welcome" style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Welcome to the Student Management System!</h4>
-                <div id="system-description" style="color: #666; line-height: 1.6;">
-                    This system integrates multiple management functions for students, teachers, courses, enrollments, grades, etc. It supports data statistics, information retrieval, permission management and other operations. Users can quickly access various management pages through the left navigation bar to achieve efficient educational administration and information query.
-                </div>
-            </div>
+                <AntDesign.Typography>
+                    <AntDesign.Title Level="4">欢迎使用学生管理系统！</AntDesign.Title>
+                    <AntDesign.Paragraph>
+                        本系统集成了学生、教师、课程、选课、成绩等多项管理功能，支持数据统计、信息检索、权限管理等操作。用户可通过左侧导航栏快速访问各类管理页面，实现高效的教务管理与信息查询。
+                    </AntDesign.Paragraph>
+                </AntDesign.Typography>
         </div>
         
-        <h2 id="system-overview-title" style="margin-bottom: 24px; color: #1f2937; font-weight: 600; font-size: 20px;">
+        <h2 style="margin-bottom: 24px; color: #1f2937; font-weight: 600; font-size: 20px;">
             <AntDesign.Icon Type="dashboard" style="margin-right: 8px; color: #1890ff;" />
-            System Data Overview
+            系统数据概览
         </h2>
 
         <AntDesign.Row Gutter="24">
@@ -84,7 +70,7 @@ else if (isAuthenticated)
                         <div style="padding: 24px;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <div>
-                                    <div id="student-count-label" style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Total Students</div>
+                                    <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">学生总数</div>
                                     <div style="font-size: 32px; font-weight: 700; color: #1f2937;">@studentCount</div>
                                 </div>
                                 <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
@@ -103,7 +89,7 @@ else if (isAuthenticated)
                         <div style="padding: 24px;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <div>
-                                    <div id="teacher-count-label" style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Total Teachers</div>
+                                    <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">教师总数</div>
                                     <div style="font-size: 32px; font-weight: 700; color: #1f2937;">@teacherCount</div>
                                 </div>
                                 <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
@@ -122,7 +108,7 @@ else if (isAuthenticated)
                         <div style="padding: 24px;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <div>
-                                    <div id="course-count-label" style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Total Courses</div>
+                                    <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">课程总数</div>
                                     <div style="font-size: 32px; font-weight: 700; color: #1f2937;">@courseCount</div>
                                 </div>
                                 <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
@@ -141,7 +127,7 @@ else if (isAuthenticated)
                         <div style="padding: 24px;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <div>
-                                    <div id="enrollment-count-label" style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Enrollment Records</div>
+                                    <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">选课记录</div>
                                     <div style="font-size: 32px; font-weight: 700; color: #1f2937;">@enrollmentCount</div>
                                 </div>
                                 <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
@@ -156,193 +142,84 @@ else if (isAuthenticated)
     </div>
 }
 
-<!-- 直接在页面中嵌入本地化脚本 -->
-<script>
-    console.log('页面脚本加载 - 测试');
-    
-    // 创建本地化函数
-    function initializeLocalization() {
-        console.log('=== 开始本地化处理 ===');
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const culture = urlParams.get('culture');
-        console.log('URL culture参数:', culture);
-        
-        if (culture === 'zh-CN') {
-            console.log('执行中文本地化...');
-            
-            // 更新欢迎标题
-            const welcomeTitle = document.getElementById('welcome-title');
-            if (welcomeTitle) {
-                welcomeTitle.textContent = '欢迎回来，admin！';
-                console.log('✓ 更新欢迎标题');
-            } else {
-                console.log('✗ 未找到welcome-title');
-            }
-            
-            // 更新系统介绍标题
-            const systemWelcome = document.getElementById('system-welcome');
-            if (systemWelcome) {
-                systemWelcome.textContent = '欢迎使用学生管理系统！';
-                console.log('✓ 更新系统介绍');
-            } else {
-                console.log('✗ 未找到system-welcome');
-            }
-            
-            // 更新系统描述
-            const systemDesc = document.getElementById('system-description');
-            if (systemDesc) {
-                systemDesc.textContent = '本系统集成了学生、教师、课程、选课、成绩等多项管理功能，支持数据统计、信息检索、权限管理等操作。用户可通过左侧导航栏快速访问各类管理页面，实现高效的教务管理与信息查询。';
-                console.log('✓ 更新系统描述');
-            } else {
-                console.log('✗ 未找到system-description');
-            }
-            
-            // 更新概览标题
-            const overviewTitle = document.getElementById('system-overview-title');
-            if (overviewTitle) {
-                const icon = overviewTitle.querySelector('.anticon');
-                if (icon) {
-                    overviewTitle.innerHTML = '';
-                    overviewTitle.appendChild(icon.cloneNode(true));
-                    overviewTitle.appendChild(document.createTextNode(' 系统数据概览'));
-                } else {
-                    overviewTitle.textContent = '系统数据概览';
-                }
-                console.log('✓ 更新概览标题');
-            } else {
-                console.log('✗ 未找到system-overview-title');
-            }
-            
-            // 更新统计标签
-            const labels = {
-                'student-count-label': '学生总数',
-                'teacher-count-label': '教师总数', 
-                'course-count-label': '课程总数',
-                'enrollment-count-label': '选课记录'
-            };
-            
-            Object.entries(labels).forEach(([id, text]) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.textContent = text;
-                    console.log('✓ 更新标签:', id, '=', text);
-                } else {
-                    console.log('✗ 未找到标签:', id);
-                }
-            });
-            
-            console.log('中文本地化完成');
-        } else {
-            console.log('非中文语言，跳过本地化');
-        }
-    }
-    
-    // 多种方式触发本地化
-    console.log('设置本地化触发器...');
-    
-    // 立即尝试
-    initializeLocalization();
-    
-    // DOM加载完成后
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOMContentLoaded 触发');
-            setTimeout(initializeLocalization, 100);
-            setTimeout(initializeLocalization, 500);
-            setTimeout(initializeLocalization, 1000);
-        });
-    } else {
-        console.log('DOM已加载，立即执行');
-        setTimeout(initializeLocalization, 100);
-        setTimeout(initializeLocalization, 500);
-        setTimeout(initializeLocalization, 1000);
-    }
-    
-    // 页面完全加载后
-    window.addEventListener('load', function() {
-        console.log('页面完全加载');
-        setTimeout(initializeLocalization, 100);
-    });
-    
-    // 暴露全局函数供手动调用
-    window.manualLocalization = initializeLocalization;
-    
-    console.log('本地化脚本初始化完成');
-</script>
-
 @code {
+    private string lastExceptionMessage = "";
+    private string lastExceptionStack = "";
     private bool isLoading = true;
     private bool isAuthenticated = false;
     private string currentUser = string.Empty;
+    private CimContext? DB;
+    // 统计数据
     private int studentCount = 0;
     private int teacherCount = 0;
     private int courseCount = 0;
     private int enrollmentCount = 0;
-    private string lastExceptionMessage = string.Empty;
-    private string lastExceptionStack = string.Empty;
-    
-    // Debug variables
-    private string debugUserRole = "";
-    private string debugUserName = "";
-    private string debugErrorMessage = "";
-    
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            isLoading = true;
-            StateHasChanged();
 
-            var userRole = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userRole");
-            var userName = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
-            
-            // Set debug variables
-            debugUserRole = userRole ?? "null";
-            debugUserName = userName ?? "null";
-            
-            if (!string.IsNullOrEmpty(userRole) && !string.IsNullOrEmpty(userName))
-            {
-                if (userRole == "2")
-                {
-                    isAuthenticated = true;
-                    currentUser = userName;
-                    debugErrorMessage = "Authentication successful";
-                    await LoadStatisticsData();
-                }
-                else
-                {
-                    isAuthenticated = false;
-                    debugErrorMessage = $"Access denied. Role {userRole} != 2";
-                    lastExceptionMessage = debugErrorMessage;
-                }
-            }
-            else
-            {
-                isAuthenticated = false;
-                debugErrorMessage = "Missing authentication data";
-                await Task.Delay(3000);
-                NavigationManager.NavigateTo("/login", true);
-            }
-        }
-        catch (Exception ex)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            isAuthenticated = false;
-            lastExceptionMessage = ex.Message;
-            debugErrorMessage = $"Exception: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
+            DB = DbFactory.CreateDbContext();
+            await CheckAuthentication();
+            if (isAuthenticated)
+            {
+                await LoadStatistics();
+            }
             StateHasChanged();
         }
     }
 
-    private async Task LoadStatisticsData()
+    private async Task CheckAuthentication()
     {
         try
         {
-            using var DB = DbFactory.CreateDbContext();
+            currentUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser") ?? string.Empty;
+            var userRole = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userRole") ?? string.Empty;
+            
+            if (string.IsNullOrEmpty(currentUser))
+            {
+                // 未登录，重定向到登录页面
+                NavigationManager.NavigateTo("/login", forceLoad: true);
+                return;
+            }
+            
+            // 检查用户角色是否为管理员
+            if (userRole != "2") // 2 表示管理员角色
+            {
+                // 不是管理员角色，重定向到登录页面
+                await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "currentUser");
+                await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "userRole");
+                NavigationManager.NavigateTo("/login", forceLoad: true);
+                return;
+            }
+            
+            isAuthenticated = true;
+        }
+        catch (Exception ex)
+        {
+            // 记录异常信息
+            lastExceptionMessage = ex.Message;
+            lastExceptionStack = ex.StackTrace ?? "";
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadStatistics()
+    {
+        try
+        {
+            if (DB == null)
+            {
+                lastExceptionMessage = "数据库上下文未初始化";
+                lastExceptionStack = "";
+                return;
+            }
+            
+            // 使用Entity Framework查询，更安全
             studentCount = await DB.SMS_Students.CountAsync();
             teacherCount = await DB.SMS_Teachers.CountAsync();
             courseCount = await DB.SMS_Courses.CountAsync();

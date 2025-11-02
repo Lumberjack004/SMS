@@ -5,6 +5,9 @@ C:\Users\ZH202508001\Desktop\Student Management System\publish\SMS.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\SMS.runtimeconfig.json
 C:\Users\ZH202508001\Desktop\Student Management System\publish\SMS.pdb
 C:\Users\ZH202508001\Desktop\Student Management System\publish\AntDesign.dll
+C:\Users\ZH202508001\Desktop\Student Management System\publish\Asp.Versioning.Abstractions.dll
+C:\Users\ZH202508001\Desktop\Student Management System\publish\Asp.Versioning.Http.dll
+C:\Users\ZH202508001\Desktop\Student Management System\publish\Asp.Versioning.Mvc.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Azure.Core.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Azure.Identity.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Humanizer.dll
@@ -44,6 +47,7 @@ C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.Identit
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.IdentityModel.Tokens.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.JSInterop.WebAssembly.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.NET.StringTools.dll
+C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.OpenApi.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.SqlServer.Server.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.VisualStudio.Web.CodeGeneration.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\Microsoft.VisualStudio.Web.CodeGeneration.Core.dll
@@ -67,6 +71,9 @@ C:\Users\ZH202508001\Desktop\Student Management System\publish\NuGet.ProjectMode
 C:\Users\ZH202508001\Desktop\Student Management System\publish\NuGet.Protocol.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\NuGet.Versioning.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\OneOf.dll
+C:\Users\ZH202508001\Desktop\Student Management System\publish\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\ZH202508001\Desktop\Student Management System\publish\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\ZH202508001\Desktop\Student Management System\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\System.CodeDom.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\System.Composition.AttributedModel.dll
 C:\Users\ZH202508001\Desktop\Student Management System\publish\System.Composition.Convention.dll

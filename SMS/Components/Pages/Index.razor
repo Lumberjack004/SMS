@@ -1,12 +1,9 @@
 @page "/"
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@inject IStringLocalizer<SharedResources> Localizer
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
-<PageTitle>@Localizer["SystemTitle"]</PageTitle>
 
 @code {
     protected override async Task OnInitializedAsync()

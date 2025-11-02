@@ -259,3 +259,11 @@ C:\Users\ZH202508001\Desktop\Student Management System\SMS\obj\Release\net8.0\re
 C:\Users\ZH202508001\Desktop\Student Management System\SMS\obj\Release\net8.0\SMS.pdb
 C:\Users\ZH202508001\Desktop\Student Management System\SMS\obj\Release\net8.0\SMS.genruntimeconfig.cache
 C:\Users\ZH202508001\Desktop\Student Management System\SMS\obj\Release\net8.0\ref\SMS.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\bin\Release\net8.0\Asp.Versioning.Abstractions.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\bin\Release\net8.0\Asp.Versioning.Http.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\bin\Release\net8.0\Asp.Versioning.Mvc.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\bin\Release\net8.0\Microsoft.OpenApi.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\bin\Release\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\ZH202508001\Desktop\Student Management System\SMS\obj\Release\net8.0\SMS.MvcApplicationPartsAssemblyInfo.cs

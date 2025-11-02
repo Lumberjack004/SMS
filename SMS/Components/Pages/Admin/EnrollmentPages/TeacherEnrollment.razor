@@ -373,19 +373,8 @@
                             清除
                         </button>
                     </div>
-                    
-                    <div style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">选择课程:</label>
-                        <select value="@selectedCourseForGrade" style="width: 300px; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;" @onchange="@OnCourseSelectionChanged">
-                            <option value="0">请选择已结束的课程</option>
-                            @foreach (var course in finishedCourses)
-                            {
-                                <option value="@course.Id">@course.Name (@course.CID)</option>
-                            }
-                        </select>
-                    </div>
 
-                    @if (selectedCourseForGrade > 0 && courseEnrollments != null && courseEnrollments.Any())
+                    @if (courseEnrollments != null && courseEnrollments.Any())
                     {
                                                  <table style="width: 100%; border-collapse: collapse; margin-top: 16px; border: 1px solid #ddd;">
                              <thead style="background: #f5f5f5;">
@@ -458,9 +447,9 @@
                             </tbody>
                         </table>
                     }
-                    else if (selectedCourseForGrade > 0)
+                    else if (courseEnrollments != null && !courseEnrollments.Any())
                     {
-                        <p style="color: #999; text-align: center; padding: 20px;">该课程暂无有效的选课学生</p>
+                        <p style="color: #999; text-align: center; padding: 20px;">该教师的已结束课程暂无有效的选课学生</p>
                     }
                 }
             </div>
@@ -672,7 +661,6 @@
     // 成绩管理相关
     private List<Course>? finishedCourses = new();
     private List<Enrollment> courseEnrollments = new();
-    private int selectedCourseForGrade = 0;
     private Dictionary<int, int> gradeInputs = new();
 
     // 教师申请审批相关变量
@@ -936,7 +924,11 @@
     
     private void SearchGradeManagement()
     {
-    if (originalCourseEnrollments == null) return;
+        if (originalCourseEnrollments == null) 
+        {
+            _ = LoadAllFinishedCourseEnrollments();
+            return;
+        }
         
         if (string.IsNullOrEmpty(gradeManagementSearchText))
         {
@@ -1161,6 +1153,9 @@
                 
                 // 保存原始数据用于搜索
                 originalFinishedCourses = finishedCourses.ToList();
+
+                // 自动加载所有已结束课程的选课记录
+                await LoadAllFinishedCourseEnrollments();
             }
         }
         catch (Exception ex)
@@ -1205,20 +1200,52 @@
         }
     }
 
-    private async Task OnCourseSelectionChanged(ChangeEventArgs e)
+    private async Task LoadAllFinishedCourseEnrollments()
     {
-        selectedCourseForGrade = int.Parse(e.Value?.ToString() ?? "0");
-        if (selectedCourseForGrade > 0)
+        if (selectedTeacherTID == 0) return;
+
+        try
         {
-            await LoadCourseEnrollments(selectedCourseForGrade);
-            gradeManagementSearchText = ""; // Clear search text for new course
-            SearchGradeManagement(); // Re-apply search (which will show all if text is empty)
-        }
-        else
-        {
-            courseEnrollments.Clear();
-            originalCourseEnrollments = null;
+            var teacher = await DB.SMS_Teachers
+                .FirstOrDefaultAsync(t => t.TID == selectedTeacherTID);
+
+            if (teacher == null)
+            {
+                courseEnrollments = new List<Enrollment>();
+                originalCourseEnrollments = new List<Enrollment>();
+                return;
+            }
+
+            // 加载该教师所有已结束课程的选课记录
+            courseEnrollments = await DB.SMS_Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Course)
+                .ThenInclude(c => c!.Teacher)
+                .Where(e => e.Course != null && 
+                           e.Course.TeacherId == teacher.Id && 
+                           e.Course.CourseStatus == CourseStatus.已结束 && 
+                           e.Status == "Active")
+                .OrderBy(e => e.Course != null ? e.Course.Name : "")
+                .ThenBy(e => e.Student!.Name)
+                .ToListAsync();
+
+            // 保存原始数据用于搜索
+            originalCourseEnrollments = courseEnrollments.ToList();
+
+            // 初始化成绩输入字典
+            gradeInputs.Clear();
+            foreach (var enrollment in courseEnrollments)
+            {
+                gradeInputs[enrollment.Id] = (int)(enrollment.Grade ?? 0);
+            }
+
             StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"加载所有已结束课程选课记录失败: {ex.Message}");
+            courseEnrollments = new List<Enrollment>();
+            originalCourseEnrollments = new List<Enrollment>();
         }
     }
 
@@ -1237,7 +1264,8 @@
                     await JS.InvokeVoidAsync("alert", "成绩保存成功");
                     
                     // 重新加载数据以更新显示
-                    await LoadCourseEnrollments(selectedCourseForGrade);
+                    await LoadAllFinishedCourseEnrollments();
+                    SearchGradeManagement(); // 重新应用搜索筛选
                 }
             }
         }

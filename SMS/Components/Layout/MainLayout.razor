@@ -1,9 +1,5 @@
 ﻿@using SMS.Components.Layout
-@using SMS.Components.Shared
-@using Microsoft.Extensions.Localization
-@using SMS.Resources
 @inherits LayoutComponentBase
-@inject IStringLocalizer<SharedResources> Localizer
 
 <AntDesign.Layout style="min-height: 100vh;">
     <!-- 统一的顶部栏 -->
@@ -19,14 +15,8 @@
             <FunctionSearch />
         </div>
         
-        <!-- 右侧区域：语言选择器 + 用户菜单 -->
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <!-- 语言选择器 -->
-            <div style="color: white;">
-                <LanguageSelector />
-            </div>
-            
-            <!-- 用户菜单 -->
+        <!-- 右侧用户菜单 -->
+        <div>
             <UserMenu />
         </div>
     </AntDesign.Header>
@@ -44,7 +34,7 @@
 </AntDesign.Layout>
 
 <div id="blazor-error-ui">
-    @Localizer["UnhandledError"]
-    <a href="" class="reload">@Localizer["Reload"]</a>
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>

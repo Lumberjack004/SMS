@@ -1,35 +1,32 @@
 @page "/student-home"
 @using SMS.Models
 @using Microsoft.EntityFrameworkCore
-@using Microsoft.Extensions.Localization
-@using SMS.Resources
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject IDbContextFactory<SMS.CimContext> DbFactory
-@inject IStringLocalizer<SharedResources> Localizer
 @rendermode InteractiveServer
 
-<PageTitle>@Localizer["Home"] - @Localizer["Student"]</PageTitle>
+<PageTitle>主页 - 学生端</PageTitle>
 
 @if (isLoading)
 {
     <div style="display: flex; justify-content: center; align-items: center; height: 400px; flex-direction:column;">
         <AntDesign.Spin Size="@AntDesign.SpinSize.Large" />
-        <span style="margin-left: 16px; color: #666;">@Localizer["Loading"]...</span>
+        <span style="margin-left: 16px; color: #666;">正在加载数据...</span>
     </div>
 }
 else if (isAuthenticated)
 {
     <!-- 欢迎横幅 -->
     <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 32px; border-radius: 16px; margin-bottom: 32px; color: white;">
-        <h1 style="margin: 0 0 8px 0; font-size: 28px; font-weight: 600; color: white;">@Localizer["WelcomeBack"]，@currentUser！</h1>
+        <h1 style="margin: 0 0 8px 0; font-size: 28px; font-weight: 600; color: white;">欢迎回来，@currentUser！</h1>
     </div>
 
     <!-- 个性化数据统计面板 -->
     <div style="margin-bottom: 32px;">
         <div class="intro-container" style="margin-bottom: 24px;">
             <AntDesign.Typography>
-                <AntDesign.Title Level="4">@Localizer["WelcomeToStudentSystem"]！</AntDesign.Title>
+                <AntDesign.Title Level="4">欢迎使用学生管理系统！</AntDesign.Title>
                 <AntDesign.Paragraph>
                     本页面为您展示个人数据统计，功能入口请前往左侧目录。
                 </AntDesign.Paragraph>

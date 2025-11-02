@@ -1,10 +1,13 @@
 @page "/student-pages/student-grades"
 @using SMS.Models
+@using SMS.Models.Api
 @using Microsoft.EntityFrameworkCore
 @using AntDesign
-@inject SMS.CimContext DB
+@using System.Text.Json
+@inject IDbContextFactory<SMS.CimContext> DbFactory
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
+@inject HttpClient HttpClient
 @rendermode InteractiveServer
 
 <PageTitle>成绩查询 - 学生端</PageTitle>
@@ -135,11 +138,12 @@
             currentUser = await JS.InvokeAsync<string>("localStorage.getItem", "currentUser");
             if (!string.IsNullOrEmpty(currentUser))
             {
+                using var context = await DbFactory.CreateDbContextAsync();
                 // 先通过用户名查找用户，再通过StudentId查找学生
-                var user = await DB.SMS_Users.FirstOrDefaultAsync(u => u.Username == currentUser && u.Role == UserRole.学生);
+                var user = await context.SMS_Users.FirstOrDefaultAsync(u => u.Username == currentUser && u.Role == UserRole.学生);
                 if (user?.StudentId.HasValue == true)
                 {
-                    currentStudent = await DB.SMS_Students.FindAsync(user.StudentId.Value);
+                    currentStudent = await context.SMS_Students.FindAsync(user.StudentId.Value);
                     if (currentStudent != null)
                     {
                         selectedStudentSID = currentStudent.SID;
@@ -156,7 +160,8 @@
 
     private async Task LoadStudentGrades()
     {
-        studentEnrollments = await DB.SMS_Enrollments
+        using var context = await DbFactory.CreateDbContextAsync();
+        studentEnrollments = await context.SMS_Enrollments
             .Include(e => e.Course)
             .ThenInclude(c => c!.Teacher)
             .Where(e => e.StudentSID == selectedStudentSID)

@@ -1,9 +1,13 @@
 @page "/teacher-pages/teacher-grades"
 @using SMS.Models
+@using SMS.Models.Api
 @using Microsoft.EntityFrameworkCore
+@using System.Text.Json
+@using System.Text
 @inject IDbContextFactory<SMS.CimContext> DbFactory
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@inject HttpClient HttpClient
 @rendermode InteractiveServer
 
 <PageTitle>教师成绩管理 - 教师端</PageTitle>
@@ -102,13 +106,11 @@
     private string gradeSearchText = string.Empty;
     private Dictionary<int, decimal> gradeInputs = new();
     private string currentUser = string.Empty;
-    private CimContext? DB;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            DB = DbFactory.CreateDbContext();
             currentUser = await GetCurrentUser();
             await LoadFinishedCourses();
             StateHasChanged();
@@ -126,7 +128,7 @@
         isLoading = true;
         StateHasChanged();
         
-        if (DB == null || string.IsNullOrEmpty(currentUser))
+        if (string.IsNullOrEmpty(currentUser))
         {
             finishedCourses = new();
             courseEnrollments = new();
@@ -134,8 +136,9 @@
             return;
         }
         
+        using var context = await DbFactory.CreateDbContextAsync();
         // 先通过用户名查找User记录，然后通过TeacherId关联到Teacher表
-        var user = await DB.SMS_Users.FirstOrDefaultAsync(u => u.Username == currentUser);
+        var user = await context.SMS_Users.FirstOrDefaultAsync(u => u.Username == currentUser);
         if (user == null || user.TeacherId == null)
         {
             finishedCourses = new();
@@ -144,7 +147,7 @@
             return;
         }
         
-        var teacher = await DB.SMS_Teachers.FirstOrDefaultAsync(t => t.Id == user.TeacherId);
+        var teacher = await context.SMS_Teachers.FirstOrDefaultAsync(t => t.Id == user.TeacherId);
         if (teacher == null)
         {
             finishedCourses = new();
@@ -154,13 +157,13 @@
         }
         
         // 加载已结束的课程
-        finishedCourses = await DB.SMS_Courses.Where(c => c.TeacherId == teacher.Id && c.CourseStatus == CourseStatus.已结束).ToListAsync();
+        finishedCourses = await context.SMS_Courses.Where(c => c.TeacherId == teacher.Id && c.CourseStatus == CourseStatus.已结束).ToListAsync();
         
         // 加载所有已结束课程的选课记录
         if (finishedCourses.Any())
         {
             var courseCIDs = finishedCourses.Select(c => c.CID).ToList();
-            courseEnrollments = await DB.SMS_Enrollments
+            courseEnrollments = await context.SMS_Enrollments
                 .Include(e => e.Student)
                 .Include(e => e.Course)
                 .Where(e => courseCIDs.Contains(e.CourseCID))
@@ -186,21 +189,22 @@
             return;
         }
         
-        if (DB == null || string.IsNullOrEmpty(currentUser))
+        if (string.IsNullOrEmpty(currentUser))
         {
             courseEnrollments = new();
             return;
         }
         
+        using var context = await DbFactory.CreateDbContextAsync();
         // 获取教师信息
-        var user = await DB.SMS_Users.FirstOrDefaultAsync(u => u.Username == currentUser);
+        var user = await context.SMS_Users.FirstOrDefaultAsync(u => u.Username == currentUser);
         if (user == null || user.TeacherId == null)
         {
             courseEnrollments = new();
             return;
         }
         
-        var teacher = await DB.SMS_Teachers.FirstOrDefaultAsync(t => t.Id == user.TeacherId);
+        var teacher = await context.SMS_Teachers.FirstOrDefaultAsync(t => t.Id == user.TeacherId);
         if (teacher == null)
         {
             courseEnrollments = new();
@@ -209,7 +213,7 @@
         
         // 搜索选课记录
         var searchText = gradeSearchText.ToLower();
-        courseEnrollments = await DB.SMS_Enrollments
+        courseEnrollments = await context.SMS_Enrollments
             .Include(e => e.Student)
             .Include(e => e.Course)
             .Where(e => e.Course != null && 
@@ -235,24 +239,67 @@
 
     private async Task SaveGrade(int enrollmentId)
     {
-        if (DB == null) return;
-        var enrollment = await DB.SMS_Enrollments.FirstOrDefaultAsync(e => e.Id == enrollmentId);
-        if (enrollment == null) return;
-        if (gradeInputs.TryGetValue(enrollmentId, out decimal grade))
+        if (!gradeInputs.TryGetValue(enrollmentId, out decimal grade))
         {
-            enrollment.Grade = grade;
-            DB.SMS_Enrollments.Update(enrollment);
-            await DB.SaveChangesAsync();
+            await JS.InvokeVoidAsync("alert", "请先输入成绩");
+            return;
+        }
+
+        if (grade < 0 || grade > 100)
+        {
+            await JS.InvokeVoidAsync("alert", "成绩必须在0-100之间");
+            return;
+        }
+
+        try
+        {
+            var currentUser = await JS.InvokeAsync<string>("localStorage.getItem", "currentUser") ?? "System";
             
-            // 重新加载数据
-            if (string.IsNullOrWhiteSpace(gradeSearchText))
+            var gradeUpdateModel = new
             {
-                await LoadFinishedCourses();
+                Grade = grade,
+                UpdateUser = currentUser
+            };
+
+            var json = JsonSerializer.Serialize(gradeUpdateModel);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await HttpClient.PutAsync($"/api/Grades/enrollment/{enrollmentId}/grade", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<object>>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                
+                if (apiResponse?.IsSuccess == true)
+                {
+                    await JS.InvokeVoidAsync("alert", "成绩保存成功！");
+                    // 清除输入框中的值
+                    gradeInputs.Remove(enrollmentId);
+                    
+                    // 重新加载数据
+                    if (string.IsNullOrWhiteSpace(gradeSearchText))
+                    {
+                        await LoadFinishedCourses();
+                    }
+                    else
+                    {
+                        await SearchGrades();
+                    }
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("alert", $"保存失败: {apiResponse?.Message}");
+                }
             }
             else
             {
-                await SearchGrades();
+                await JS.InvokeVoidAsync("alert", $"保存失败: HTTP {response.StatusCode}");
             }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"保存成绩时出现错误: {ex.Message}");
         }
     }
 

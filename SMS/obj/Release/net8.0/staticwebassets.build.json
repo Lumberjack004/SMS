@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "SJ67H+VJpVn13NMek4fLedGAZ7zZ61fWoTdqxRerTNQ=",
+  "Hash": "Bb8lWtJ4EMXvxt1N+hmlZRLfowwToW900LqTJ6J+Brc=",
   "Source": "SMS",
   "BasePath": "_content/SMS",
   "Mode": "Default",
@@ -7254,6 +7254,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.png"
+    },
+    {
+      "Identity": "C:\\Users\\ZH202508001\\Desktop\\Student Management System\\SMS\\wwwroot\\js\\site.js",
+      "SourceId": "SMS",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\ZH202508001\\Desktop\\Student Management System\\SMS\\wwwroot\\",
+      "BasePath": "_content/SMS",
+      "RelativePath": "js/site.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\site.js"
     },
     {
       "Identity": "C:\\Users\\ZH202508001\\Desktop\\Student Management System\\SMS\\wwwroot\\quickgrid-custom.css",

@@ -1,9 +1,6 @@
 @using AntDesign
-@using Microsoft.Extensions.Localization
-@using SMS.Resources
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
-@inject IStringLocalizer<SharedResources> Localizer
 
 <div class="nav-container">
     <div class="nav-wrapper">
@@ -11,21 +8,21 @@
         
         <!-- 首页按钮 - 根据角色跳转到不同首页 -->
         <NavLink href="@GetHomeUrl()" style="text-decoration: none;">
-            <div class="nav-circular-btn" title="@Localizer["Home"]">
+            <div class="nav-circular-btn">
                 <Icon Type="home" Theme="@IconThemeType.Outline" style="font-size: 18px; color: #2c5aa0;" />
             </div>
         </NavLink>
         
         <!-- 目录按钮 - 根据角色显示不同目录内容 -->
         <NavLink href="@GetDirectoryUrl()" style="text-decoration: none;">
-            <div class="nav-circular-btn" title="@Localizer["Directory"]">
+            <div class="nav-circular-btn">
                 <Icon Type="bars" Theme="@IconThemeType.Outline" style="font-size: 18px; color: #2c5aa0;" />
             </div>
         </NavLink>
         
         <!-- 收藏夹按钮 - 根据角色显示不同收藏内容 -->
         <NavLink href="@GetFavoritesUrl()" style="text-decoration: none;">
-            <div class="nav-circular-btn" title="@Localizer["Favorites"]">
+            <div class="nav-circular-btn">
                 <Icon Type="star" Theme="@IconThemeType.Outline" style="font-size: 18px; color: #2c5aa0;" />
             </div>
         </NavLink>

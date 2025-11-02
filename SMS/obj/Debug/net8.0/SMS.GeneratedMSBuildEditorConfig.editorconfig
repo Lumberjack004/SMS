@@ -70,10 +70,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblxFbnJvbGxtZW50UGFnZXNcQWRtaW5FbnJvbGxtZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Admin/EnrollmentPages/AdminTeacherEnrollment.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblxFbnJvbGxtZW50UGFnZXNcQWRtaW5UZWFjaGVyRW5yb2xsbWVudC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Admin/EnrollmentPages/EnrollmentManagement.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblxFbnJvbGxtZW50UGFnZXNcRW5yb2xsbWVudE1hbmFnZW1lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -146,20 +142,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoXFJlZ2lzdGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/DebugAuth.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEZWJ1Z0F1dGgucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbmRleC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/LocalizationTest.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2NhbGl6YXRpb25UZXN0LnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/SetCulture.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZXRDdWx0dXJlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Student/StudentCourses.razor]
@@ -216,10 +200,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Shared/LanguageSelector.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcTGFuZ3VhZ2VTZWxlY3Rvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/_Imports.razor]

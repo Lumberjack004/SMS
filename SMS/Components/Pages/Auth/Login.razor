@@ -9,56 +9,49 @@
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center">登录</h3>
-                </div>
-                <div class="card-body">
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <div class="alert alert-danger">
-                            @errorMessage
-                        </div>
-                    }
+<AntDesign.Row style="margin-top: 80px; justify-content: center;">
+    <AntDesign.Col Xs="22" Sm="16" Md="12" Lg="8" Xl="6">
+        <AntDesign.Card>
+            <Body>
+                <h3 style="text-align: center; margin-bottom: 24px;">登录</h3>
+                
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <AntDesign.Alert Type="@AntDesign.AlertType.Error" Message="@errorMessage" style="margin-bottom: 24px;" />
+                }
 
-                    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" OnInvalidSubmit="HandleInvalidLogin">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+                <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label>用户名</label>
+                        <AntDesign.Input @bind-Value="loginModel.Username" Placeholder="请输入用户名" />
+                        <ValidationMessage For="@(() => loginModel.Username)" />
+                    </div>
 
-                        <div class="form-group mb-3">
-                            <label for="username">用户名</label>
-                            <InputText id="username" class="form-control" @bind-Value="loginModel.Username" />
-                            <ValidationMessage For="@(() => loginModel.Username)" />
-                        </div>
+                    <div style="margin-bottom: 16px;">
+                        <label>密码</label>
+                        <AntDesign.InputPassword @bind-Value="loginModel.Password" Placeholder="请输入密码" />
+                        <ValidationMessage For="@(() => loginModel.Password)" />
+                    </div>
 
-                        <div class="form-group mb-3">
-                            <label for="password">密码</label>
-                            <InputText type="password" id="password" class="form-control" @bind-Value="loginModel.Password" />
-                            <ValidationMessage For="@(() => loginModel.Password)" />
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <AntDesign.Checkbox @bind-Value="loginModel.RememberMe">记住我</AntDesign.Checkbox>
+                        <a href="/forgot-password">忘记密码？</a>
+                    </div>
 
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="form-check">
-                                <InputCheckbox id="rememberMe" class="form-check-input" @bind-Value="loginModel.RememberMe" />
-                                <label class="form-check-label" for="rememberMe">记住我</label>
-                            </div>
-                            <a href="/forgot-password">忘记密码？</a>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 mb-3">登录</button>
-                        
-                        <div class="text-center">
-                            <p>还没有账号？ <a href="/register">立即注册</a></p>
-                        </div>
-                    </EditForm>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                    <AntDesign.Button Type="@AntDesign.ButtonType.Primary" HtmlType="submit" Block="true" Size="@AntDesign.ButtonSize.Large">
+                        登录
+                    </AntDesign.Button>
+                    
+                    <div style="text-align: center; margin-top: 16px;">
+                        <span>还没有账号？ <a href="/register">立即注册</a></span>
+                    </div>
+                </EditForm>
+            </Body>
+        </AntDesign.Card>
+    </AntDesign.Col>
+</AntDesign.Row>
 
 @code {
     private LoginModel loginModel = new();
@@ -99,12 +92,12 @@
             using var context_db = await DbContextFactory.CreateDbContextAsync();
             
             // 根据用户名查找用户
-            var user = await context_db.Users.FirstOrDefaultAsync(u => u.Username == loginModel.Username);
+            var user = await context_db.SMS_Users.FirstOrDefaultAsync(u => u.Username == loginModel.Username);
 
             if (user != null && BCrypt.Net.BCrypt.Verify(loginModel.Password, user.Password))
             {
                 // 更新最后登录时间和审计字段 (使用UTC时间)
-                user.LastLogin = DateTime.UtcNow;
+                // 已删除的数据库字段
                 user.UpdateUser = user.Username; // 设置更新用户为当前登录用户
                 await context_db.SaveChangesAsync();
                 

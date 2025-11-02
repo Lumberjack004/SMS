@@ -20,9 +20,7 @@ public class User
     [StringLength(100)]
     public string? Email { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? LastLogin { get; set; }
-    public bool IsActive { get; set; } = true;
+    // 已删除的数据库字段
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
     public string? CreateUser { get; set; }

@@ -1,26 +1,132 @@
 @page "/students"
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using AntDesign
+@using Microsoft.AspNetCore.Components
 @inject SMS.CimContext DB
+@inject NavigationManager NavigationManager
 @using SMS.Models
+@rendermode InteractiveServer
 
-<PageTitle>Index</PageTitle>
+<PageTitle>学生管理</PageTitle>
 
-<h1>Index</h1>
+<div style="margin: 20px;">
+    <Breadcrumb Style="margin-bottom: 20px;">
+        <BreadcrumbItem>
+            <a href="/" style="color: #1890ff; text-decoration: none;">目录</a>
+        </BreadcrumbItem>
+        <BreadcrumbItem>学生管理</BreadcrumbItem>
+    </Breadcrumb>
 
-<p>
-    <a href="students/create">Create New</a>
-</p>
+    <Card Title="学生管理">
+    <Extra>
+        <Space>
+            <SpaceItem>
+                <Search Placeholder="搜索学生姓名或专业" WrapperStyle="width: 250px;" ClassicSearchIcon 
+                        @bind-Value="searchText" OnSearch="OnSearch" />
+            </SpaceItem>
+            <SpaceItem>
+                <a href="students/create" style="text-decoration: none;">
+                    <Button Type="@ButtonType.Primary">
+                        <Icon Type="plus" Theme="@IconThemeType.Outline" />
+                        新增学生
+                    </Button>
+                </a>
+            </SpaceItem>
+        </Space>
+    </Extra>
+    <Body>
+        <QuickGrid Class="table" Items="FilteredStudents">
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="student => student.SID" Title="学号" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="student => student.Name" Title="姓名" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="student => student.Age" Title="年龄" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="student => student.Major" Title="专业" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="student => student.Email" Title="邮箱" />
 
-<QuickGrid Class="table" Items="DB.SMS_Students">
-    <PropertyColumn Property="student => student.SID" />
-    <PropertyColumn Property="student => student.Name" />
-    <PropertyColumn Property="student => student.Age" />
-    <PropertyColumn Property="student => student.Major" />
-    <PropertyColumn Property="student => student.Email" />
+            <TemplateColumn Context="student" Title="操作">
+                <Space>
+                    <SpaceItem>
+                        <a href="@($"students/edit?id={student.Id}")" style="text-decoration: none;">
+                            <Button Type="@ButtonType.Link">
+                                <Icon Type="edit" Theme="@IconThemeType.Outline" />
+                                编辑
+                            </Button>
+                        </a>
+                    </SpaceItem>
+                    <SpaceItem>
+                        <a href="@($"students/details?id={student.Id}")" style="text-decoration: none;">
+                            <Button Type="@ButtonType.Link">
+                                <Icon Type="eye" Theme="@IconThemeType.Outline" />
+                                详情
+                            </Button>
+                        </a>
+                    </SpaceItem>
+                    <SpaceItem>
+                        <a href="@($"students/delete?id={student.Id}")" style="text-decoration: none;">
+                            <Button Type="@ButtonType.Link" Danger>
+                                <Icon Type="delete" Theme="@IconThemeType.Outline" />
+                                删除
+                            </Button>
+                        </a>
+                    </SpaceItem>
+                </Space>
+            </TemplateColumn>
+        </QuickGrid>
+    </Body>
+</Card>
+</div>
 
-    <TemplateColumn Context="student">
-        <a href="@($"students/edit?id={student.Id}")">Edit</a> |
-        <a href="@($"students/details?id={student.Id}")">Details</a> |
-        <a href="@($"students/delete?id={student.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+@code {
+    private string searchText = string.Empty;
+    private List<Student> students = new List<Student>();
+    private List<Student> filteredStudents = new List<Student>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            students = await DB.SMS_Students.OrderBy(s => s.Name).ToListAsync();
+            filteredStudents = students.ToList();
+        }
+        catch (Exception)
+        {
+            // 可以在这里记录错误或显示错误信息
+        }
+    }
+
+    private IQueryable<Student> FilteredStudents
+    {
+        get
+        {
+            return filteredStudents.AsQueryable();
+        }
+    }
+
+    private void OnSearch(string value)
+    {
+        searchText = value;
+        FilterStudents();
+    }
+
+    private void FilterStudents()
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            filteredStudents = students.ToList();
+        }
+        else
+        {
+            filteredStudents = students.Where(s => 
+                (s.Name != null && s.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)) || 
+                (s.Major != null && s.Major.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                s.SID.ToString().Contains(searchText) ||
+                (s.Email != null && s.Email.Contains(searchText, StringComparison.OrdinalIgnoreCase))).ToList();
+        }
+        StateHasChanged();
+    }
+}

@@ -17,41 +17,51 @@
 }
 else
 {
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Teacher" OnValidSubmit="UpdateTeacher" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <input type="hidden" name="Teacher.Id" value="@Teacher.Id" />
-                <div class="mb-3">
-                    <label for="tid" class="form-label">TID:</label>
-                    <InputNumber id="tid" @bind-Value="Teacher.TID" class="form-control" />
-                    <ValidationMessage For="() => Teacher.TID" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name:</label>
-                    <InputText id="name" @bind-Value="Teacher.Name" class="form-control" />
-                    <ValidationMessage For="() => Teacher.Name" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="age" class="form-label">Age:</label>
-                    <InputNumber id="age" @bind-Value="Teacher.Age" class="form-control" />
-                    <ValidationMessage For="() => Teacher.Age" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="major" class="form-label">Major:</label>
-                    <InputText id="major" @bind-Value="Teacher.Major" class="form-control" />
-                    <ValidationMessage For="() => Teacher.Major" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <InputText id="email" @bind-Value="Teacher.Email" class="form-control" />
-                    <ValidationMessage For="() => Teacher.Email" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
-        </div>
-    </div>
+    <AntDesign.Row>
+        <AntDesign.Col Span="12">
+            <AntDesign.Card Title="编辑教师信息">
+                <EditForm method="post" Model="Teacher" OnValidSubmit="UpdateTeacher" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <input type="hidden" name="Teacher.Id" value="@Teacher.Id" />
+                    
+                    <AntDesign.Form Model="@Teacher" Layout="@AntDesign.FormLayout.Vertical">
+                        <ChildContent Context="formContext">
+                            <AntDesign.FormItem Label="工号(TID):">
+                                <Microsoft.AspNetCore.Components.Forms.InputNumber @bind-Value="Teacher.TID" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                                <ValidationMessage For="() => Teacher.TID" style="color: #ff4d4f;" />
+                            </AntDesign.FormItem>
+                            
+                            <AntDesign.FormItem Label="姓名:">
+                                <InputText @bind-Value="Teacher.Name" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                                <ValidationMessage For="() => Teacher.Name" style="color: #ff4d4f;" />
+                            </AntDesign.FormItem>
+                            
+                            <AntDesign.FormItem Label="年龄:">
+                                <Microsoft.AspNetCore.Components.Forms.InputNumber @bind-Value="Teacher.Age" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                                <ValidationMessage For="() => Teacher.Age" style="color: #ff4d4f;" />
+                            </AntDesign.FormItem>
+                            
+                            <AntDesign.FormItem Label="专业:">
+                                <InputText @bind-Value="Teacher.Major" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                                <ValidationMessage For="() => Teacher.Major" style="color: #ff4d4f;" />
+                            </AntDesign.FormItem>
+                            
+                            <AntDesign.FormItem Label="邮箱:">
+                                <InputText @bind-Value="Teacher.Email" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                                <ValidationMessage For="() => Teacher.Email" style="color: #ff4d4f;" />
+                            </AntDesign.FormItem>
+                            
+                            <AntDesign.FormItem>
+                                <AntDesign.Button Type="@AntDesign.ButtonType.Primary" HtmlType="submit">保存</AntDesign.Button>
+                                <AntDesign.Button style="margin-left: 8px;" @onclick="@(() => NavigationManager.NavigateTo("/teachers"))">取消</AntDesign.Button>
+                            </AntDesign.FormItem>
+                        </ChildContent>
+                    </AntDesign.Form>
+                </EditForm>
+            </AntDesign.Card>
+        </AntDesign.Col>
+    </AntDesign.Row>
 }
 
 <div>
@@ -62,6 +72,7 @@ else
     [Inject]
     public IJSRuntime JSRuntime { get; set; } = default!;
     private string currentUser = string.Empty;
+    private bool hasRendered = false;
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
@@ -72,10 +83,27 @@ else
     protected override async Task OnInitializedAsync()
     {
         Teacher ??= await DB.SMS_Teachers.FirstOrDefaultAsync(m => m.Id == Id);
-        currentUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser") ?? string.Empty;
         if (Teacher is null)
         {
             NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !hasRendered)
+        {
+            hasRendered = true;
+            try
+            {
+                currentUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser") ?? string.Empty;
+                StateHasChanged();
+            }
+            catch (Exception)
+            {
+                // JavaScript interop failed, continue without current user
+                currentUser = string.Empty;
+            }
         }
     }
 

@@ -17,127 +17,143 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SMS
 build_property.RootNamespace = SMS
-build_property.ProjectDir = C:\Users\ZH202508001\Desktop\Student Management System1.3\SMS\
+build_property.ProjectDir = C:\Users\ZH202508001\Desktop\Student Management System\SMS\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\ZH202508001\Desktop\Student Management System1.3\SMS
+build_property.MSBuildProjectDirectory = C:\Users\ZH202508001\Desktop\Student Management System\SMS
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/App.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Layout/AuthLayout.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Layout/AuthLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcQXV0aExheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Layout/UserMenu.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Layout/UserMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcVXNlck1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/Auth/ForgotPassword.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Auth/ForgotPassword.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoXEZvcmdvdFBhc3N3b3JkLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/Auth/Login.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Auth/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoXExvZ2luLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/Auth/Register.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Auth/Register.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoXFJlZ2lzdGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/CoursePages/Create.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/CoursePages/Create.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3Vyc2VQYWdlc1xDcmVhdGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/CoursePages/Delete.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/CoursePages/Delete.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3Vyc2VQYWdlc1xEZWxldGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/CoursePages/Details.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/CoursePages/Details.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3Vyc2VQYWdlc1xEZXRhaWxzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/CoursePages/Edit.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/CoursePages/Edit.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3Vyc2VQYWdlc1xFZGl0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/CoursePages/Index.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/CoursePages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3Vyc2VQYWdlc1xJbmRleC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/Directory.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Directory.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEaXJlY3RvcnkucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/Favorites.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/EnrollmentManagement.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFbnJvbGxtZW50TWFuYWdlbWVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/EnrollmentPages/AdminEnrollment.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFbnJvbGxtZW50UGFnZXNcQWRtaW5FbnJvbGxtZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/EnrollmentPages/StudentEnrollment.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFbnJvbGxtZW50UGFnZXNcU3R1ZGVudEVucm9sbG1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/EnrollmentPages/TeacherEnrollment.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFbnJvbGxtZW50UGFnZXNcVGVhY2hlckVucm9sbG1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Favorites.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xGYXZvcml0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/Home.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/Index.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbmRleC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/StudentPages/Create.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/StudentPages/Create.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdHVkZW50UGFnZXNcQ3JlYXRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/StudentPages/Delete.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/StudentPages/Delete.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdHVkZW50UGFnZXNcRGVsZXRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/StudentPages/Details.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/StudentPages/Details.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdHVkZW50UGFnZXNcRGV0YWlscy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/StudentPages/Edit.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/StudentPages/Edit.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdHVkZW50UGFnZXNcRWRpdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/StudentPages/Index.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/StudentPages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdHVkZW50UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/TeacherPages/Create.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/TeacherPages/Create.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyUGFnZXNcQ3JlYXRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/TeacherPages/Delete.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/TeacherPages/Delete.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyUGFnZXNcRGVsZXRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/TeacherPages/Details.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/TeacherPages/Details.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyUGFnZXNcRGV0YWlscy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/TeacherPages/Edit.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/TeacherPages/Edit.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyUGFnZXNcRWRpdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Pages/TeacherPages/Index.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Pages/TeacherPages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyUGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Routes.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/_Imports.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Layout/MainLayout.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-t4v5m2jsyu
 
-[C:/Users/ZH202508001/Desktop/Student Management System1.3/SMS/Components/Layout/NavMenu.razor]
+[C:/Users/ZH202508001/Desktop/Student Management System/SMS/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-xdhzrbn1id

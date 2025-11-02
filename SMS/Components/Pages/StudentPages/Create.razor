@@ -8,45 +8,55 @@
 
 <h1>Create</h1>
 
-<h4>Student</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <EditForm method="post" Model="Student" OnValidSubmit="AddStudent" FormName="create" Enhance>
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" />
-            <div class="mb-3">
-                <label for="sid" class="form-label">SID:</label> 
-                <InputNumber id="sid" @bind-Value="Student.SID" class="form-control" /> 
-                <ValidationMessage For="() => Student.SID" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="name" class="form-label">Name:</label> 
-                <InputText id="name" @bind-Value="Student.Name" class="form-control" /> 
-                <ValidationMessage For="() => Student.Name" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="age" class="form-label">Age:</label> 
-                <InputNumber id="age" @bind-Value="Student.Age" class="form-control" /> 
-                <ValidationMessage For="() => Student.Age" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="major" class="form-label">Major:</label> 
-                <InputText id="major" @bind-Value="Student.Major" class="form-control" /> 
-                <ValidationMessage For="() => Student.Major" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="email" class="form-label">Email:</label> 
-                <InputText id="email" @bind-Value="Student.Email" class="form-control" /> 
-                <ValidationMessage For="() => Student.Email" class="text-danger" /> 
-            </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
-        </EditForm>
-    </div>
-</div>
+<h4>创建学生</h4>
+<AntDesign.Divider />
+<AntDesign.Row>
+    <AntDesign.Col Span="12">
+        <AntDesign.Card Title="新建学生信息">
+            <EditForm method="post" Model="Student" OnValidSubmit="AddStudent" FormName="create" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary style="color: #ff4d4f;" />
+                
+                <AntDesign.Form Model="@Student" Layout="@AntDesign.FormLayout.Vertical">
+                    <ChildContent Context="formContext">
+                        <AntDesign.FormItem Label="学号(SID):">
+                            <Microsoft.AspNetCore.Components.Forms.InputNumber @bind-Value="Student.SID" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                            <ValidationMessage For="() => Student.SID" style="color: #ff4d4f;" />
+                        </AntDesign.FormItem>
+                        
+                        <AntDesign.FormItem Label="姓名:">
+                            <InputText @bind-Value="Student.Name" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                            <ValidationMessage For="() => Student.Name" style="color: #ff4d4f;" />
+                        </AntDesign.FormItem>
+                        
+                        <AntDesign.FormItem Label="年龄:">
+                            <Microsoft.AspNetCore.Components.Forms.InputNumber @bind-Value="Student.Age" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                            <ValidationMessage For="() => Student.Age" style="color: #ff4d4f;" />
+                        </AntDesign.FormItem>
+                        
+                        <AntDesign.FormItem Label="专业:">
+                            <InputText @bind-Value="Student.Major" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                            <ValidationMessage For="() => Student.Major" style="color: #ff4d4f;" />
+                        </AntDesign.FormItem>
+                        
+                        <AntDesign.FormItem Label="邮箱:">
+                            <InputText @bind-Value="Student.Email" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;" />
+                            <ValidationMessage For="() => Student.Email" style="color: #ff4d4f;" />
+                        </AntDesign.FormItem>
+                        
+                        <AntDesign.FormItem>
+                            <AntDesign.Button Type="@AntDesign.ButtonType.Primary" HtmlType="submit">创建</AntDesign.Button>
+                            <AntDesign.Button style="margin-left: 8px;" @onclick="@(() => NavigationManager.NavigateTo("/students"))">取消</AntDesign.Button>
+                        </AntDesign.FormItem>
+                    </ChildContent>
+                </AntDesign.Form>
+            </EditForm>
+        </AntDesign.Card>
+    </AntDesign.Col>
+</AntDesign.Row>
 
-<div>
-    <a href="/students">Back to List</a>
+<div style="margin-top: 16px;">
+    <AntDesign.Button @onclick="@(() => NavigationManager.NavigateTo("/students"))">返回列表</AntDesign.Button>
 </div>
 
 @code {

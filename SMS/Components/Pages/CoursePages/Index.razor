@@ -1,27 +1,158 @@
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @page "/courses"
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using AntDesign
+@using Microsoft.AspNetCore.Components
 @inject SMS.CimContext DB
+@inject IJSRuntime JS
 @using SMS.Models
 @rendermode InteractiveServer
+@inject NavigationManager Navigation
 
-<PageTitle>Index</PageTitle>
+<PageTitle>课程管理</PageTitle>
 
-<h1>Index</h1>
+<div style="padding: 24px;">
+    <!-- 面包屑导航 -->
+    <AntDesign.Breadcrumb style="margin-bottom: 24px;">
+        <BreadcrumbItem>
+            <a href="/directory">目录</a>
+        </BreadcrumbItem>
+        <BreadcrumbItem>课程管理</BreadcrumbItem>
+    </AntDesign.Breadcrumb>
 
-<p>
-    <a href="courses/create">Create New</a>
-</p>
+    <Card Title="课程管理" Style="margin: 0;">
+    <Extra>
+        <Space>
+            <SpaceItem>
+                <Search Placeholder="搜索课程名称或描述" WrapperStyle="width: 250px;" ClassicSearchIcon 
+                        @bind-Value="searchText" OnSearch="OnSearch" />
+            </SpaceItem>
+            <SpaceItem>
+                <a href="courses/create" style="text-decoration: none;">
+                    <Button Type="@ButtonType.Primary">
+                        <Icon Type="plus" Theme="@IconThemeType.Outline" />
+                        新增课程
+                    </Button>
+                </a>
+            </SpaceItem>
+        </Space>
+    </Extra>
+    <Body>
+        <QuickGrid Class="table" Items="FilteredCourses">
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="course => course.CID" Title="课程编号" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="course => course.Name" Title="课程名称" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="course => course.Credits" Title="学分" />
+            <TemplateColumn Context="course" Title="授课教师">
+                @if (course.Teacher != null)
+                {
+                    <span>@course.Teacher.Name (工号: @course.Teacher.TID)</span>
+                }
+                else
+                {
+                    <span style="color: #999;">未分配</span>
+                }
+            </TemplateColumn>
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="course => course.Description" Title="描述" />
+            <TemplateColumn Context="course" Title="课程状态">
+                @switch (course.CourseStatus)
+                {
+                    case CourseStatus.未开课:
+                        <Tag Color="@("#faad14")">未开课</Tag>
+                        break;
+                    case CourseStatus.正在进行:
+                        <Tag Color="@("#52c41a")">正在进行</Tag>
+                        break;
+                    case CourseStatus.已结束:
+                        <Tag Color="@("#8c8c8c")">已结束</Tag>
+                        break;
+                }
+            </TemplateColumn>
 
-<QuickGrid Class="table" Items="DB.SMS_Courses">
-    <PropertyColumn Property="course => course.CID" />
-    <PropertyColumn Property="course => course.Name" />
-    <PropertyColumn Property="course => course.Credits" />
-    <PropertyColumn Property="course => course.Description" />
-    <PropertyColumn Property="course => course.Status" />
+            <TemplateColumn Context="course" Title="操作">
+                <Space>
+                    <SpaceItem>
+                        <a href="@($"courses/edit?id={course.Id}")" style="text-decoration: none;">
+                            <Button Type="@ButtonType.Link">
+                                <Icon Type="edit" Theme="@IconThemeType.Outline" />
+                                编辑
+                            </Button>
+                        </a>
+                    </SpaceItem>
+                    <SpaceItem>
+                        <a href="@($"courses/details?id={course.Id}")" style="text-decoration: none;">
+                            <Button Type="@ButtonType.Link">
+                                <Icon Type="eye" Theme="@IconThemeType.Outline" />
+                                详情
+                            </Button>
+                        </a>
+                    </SpaceItem>
+                    <SpaceItem>
+                        <a href="@($"courses/delete?id={course.Id}")" style="text-decoration: none;">
+                            <Button Type="@ButtonType.Link" Danger>
+                                <Icon Type="delete" Theme="@IconThemeType.Outline" />
+                                删除
+                            </Button>
+                        </a>
+                    </SpaceItem>
+                </Space>
+            </TemplateColumn>
+        </QuickGrid>
+    </Body>
+</Card>
 
-    <TemplateColumn Context="course">
-        <a href="@($"courses/edit?id={course.Id}")">Edit</a> |
-        <a href="@($"courses/details?id={course.Id}")">Details</a> |
-        <a href="@($"courses/delete?id={course.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+@code {
+    private string searchText = string.Empty;
+    private List<Course> courses = new List<Course>();
+    private List<Course> filteredCourses = new List<Course>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            courses = await DB.SMS_Courses.Include(c => c.Teacher).OrderBy(c => c.Name).ToListAsync();
+            filteredCourses = courses.ToList();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"加载数据失败: {ex.Message}");
+        }
+    }
+
+    private IQueryable<Course> FilteredCourses
+    {
+        get
+        {
+            return filteredCourses.AsQueryable();
+        }
+    }
+
+    private void OnSearch(string value)
+    {
+        searchText = value;
+        FilterCourses();
+    }
+
+    private void FilterCourses()
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            filteredCourses = courses.ToList();
+        }
+        else
+        {
+            filteredCourses = courses.Where(c => 
+                (c.Name != null && c.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)) || 
+                (c.Description != null && c.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                c.CID.ToString().Contains(searchText) ||
+                (c.Teacher != null && c.Teacher.Name != null && c.Teacher.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))).ToList();
+        }
+        StateHasChanged();
+    }
+}
+</div>

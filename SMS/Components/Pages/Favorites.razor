@@ -1,6 +1,7 @@
 @page "/favorites"
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
+@using AntDesign
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
 
@@ -8,42 +9,49 @@
 
 <h1 style="color: #333; margin-bottom: 30px; text-align: center; font-weight: 600;">我的收藏</h1>
 
-<div class="container-fluid">
+<div style="padding: 0 24px;">
     @if (favorites.Count == 0)
     {
-        <div class="col-12 text-center" style="margin-top: 50px;">
-            <div style="color: #999; font-size: 18px;">
-                <span style="font-size: 48px;">📝</span>
-                <p class="mt-3">您还没有收藏任何功能</p>
-                <p style="font-size: 14px;">前往<a href="/directory" class="text-decoration-none">功能目录</a>收藏您常用的功能吧！</p>
-            </div>
+        <div style="text-align: center; margin-top: 50px;">
+            <AntDesign.Empty>
+                <DescriptionTemplate>
+                    <div style="color: #999; font-size: 18px;">
+                        <span style="font-size: 48px;">📝</span>
+                        <p style="margin-top: 12px;">您还没有收藏任何功能</p>
+                        <p style="font-size: 14px;">前往<a href="/directory" style="color: #1890ff; text-decoration: none;">功能目录</a>收藏您常用的功能吧！</p>
+                    </div>
+                </DescriptionTemplate>
+            </AntDesign.Empty>
         </div>
     }
     else
     {
-        <div class="row">
+        <AntDesign.Row Gutter="24">
             @foreach (var item in favorites)
             {
                 @if (favoriteItems.ContainsKey(item))
                 {
                     var fav = favoriteItems[item];
-                    <div class="col-md-6 mb-4">
+                    <AntDesign.Col Span="12" style="margin-bottom: 16px;">
                         <a href="@fav.Url" style="text-decoration: none;">
-                            <div class="card" style="position: relative;">
-                                <div class="card-body text-center" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-                                    <div class="favorite-star" @onclick="@((e) => RemoveFavorite(item))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
+                            <AntDesign.Card Hoverable="true">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; padding: 16px;">
+                                    <div @onclick="@((e) => RemoveFavorite(item))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
                                          style="font-size: 32px; cursor: pointer; color: #ffd700; transition: color 0.3s ease;"
                                          title="取消收藏">
                                         ★
                                     </div>
-                                    <h5 style="margin: 0;">@fav.Icon @fav.Title</h5>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <Icon Type="@fav.Icon" Theme="@IconThemeType.Outline" style="font-size: 1.5rem; color: #1890ff;" />
+                                        <h5 style="margin: 0; color: #333;">@fav.Title</h5>
+                                    </div>
                                 </div>
-                            </div>
+                            </AntDesign.Card>
                         </a>
-                    </div>
+                    </AntDesign.Col>
                 }
             }
-        </div>
+        </AntDesign.Row>
     }
 </div>
 
@@ -52,9 +60,10 @@
     
     private readonly Dictionary<string, FavoriteItem> favoriteItems = new Dictionary<string, FavoriteItem>
     {
-        ["students"] = new FavoriteItem { Icon = "👥", Title = "学生管理", Url = "/students" },
-        ["teachers"] = new FavoriteItem { Icon = "👨‍🏫", Title = "教师管理", Url = "/teachers" },
-        ["courses"] = new FavoriteItem { Icon = "📚", Title = "课程管理", Url = "/courses" }
+        ["students"] = new FavoriteItem { Icon = "idcard", Title = "学生管理", Url = "/students" },
+        ["teachers"] = new FavoriteItem { Icon = "read", Title = "教师管理", Url = "/teachers" },
+        ["courses"] = new FavoriteItem { Icon = "book", Title = "课程管理", Url = "/courses" },
+        ["enrollments"] = new FavoriteItem { Icon = "team", Title = "选课管理", Url = "/enrollment-management" }
     };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

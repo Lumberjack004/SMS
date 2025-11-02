@@ -21,4 +21,10 @@ public class Teacher
     public DateTime UpdateDate { get; set; }
     public string? CreateUser { get; set; }
     public string? UpdateUser { get; set; }
+
+    // 导航属性
+    /// <summary>
+    /// 该教师授课的所有课程
+    /// </summary>
+    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 }

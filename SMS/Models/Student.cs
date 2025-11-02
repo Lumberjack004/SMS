@@ -20,4 +20,10 @@ public class Student
     public DateTime UpdateDate { get; set; }
     public string? CreateUser { get; set; }
     public string? UpdateUser { get; set; }
+
+    // 导航属性
+    /// <summary>
+    /// 该学生的所有选课记录
+    /// </summary>
+    public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 }

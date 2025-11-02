@@ -17,7 +17,7 @@
             <ValidationSummary class="text-danger" />
             <div class="mb-3">
                 <label for="cid" class="form-label">CID:</label> 
-                <InputNumber id="cid" @bind-Value="Course.CID" class="form-control" /> 
+                <Microsoft.AspNetCore.Components.Forms.InputNumber id="cid" @bind-Value="Course.CID" class="form-control" /> 
                 <ValidationMessage For="() => Course.CID" class="text-danger" /> 
             </div>        
             <div class="mb-3">
@@ -27,7 +27,7 @@
             </div>        
             <div class="mb-3">
                 <label for="credits" class="form-label">Credits:</label> 
-                <InputNumber id="credits" @bind-Value="Course.Credits" class="form-control" /> 
+                <Microsoft.AspNetCore.Components.Forms.InputNumber id="credits" @bind-Value="Course.Credits" class="form-control" /> 
                 <ValidationMessage For="() => Course.Credits" class="text-danger" /> 
             </div>        
             <div class="mb-3">
@@ -36,9 +36,13 @@
                 <ValidationMessage For="() => Course.Description" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="status" class="form-label">Status:</label> 
-                <InputCheckbox id="status" @bind-Value="Course.Status" class="form-check-input" /> 
-                <ValidationMessage For="() => Course.Status" class="text-danger" /> 
+                <label for="courseStatus" class="form-label">课程状态:</label>
+                <InputSelect id="courseStatus" @bind-Value="Course.CourseStatus" class="form-select">
+                    <option value="@CourseStatus.未开课">未开课</option>
+                    <option value="@CourseStatus.正在进行">正在进行</option>
+                    <option value="@CourseStatus.已结束">已结束</option>
+                </InputSelect>
+                <ValidationMessage For="() => Course.CourseStatus" class="text-danger" /> 
             </div>        
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
@@ -55,7 +59,7 @@
     private string currentUser = string.Empty;
 
     [SupplyParameterFromForm]
-    public Course Course { get; set; } = new();
+    public Course Course { get; set; } = new() { CourseStatus = CourseStatus.未开课 };
 
     // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task AddCourse()
@@ -66,6 +70,8 @@
             Course.CreateUser = currentUser;
             Course.UpdateUser = currentUser;
         }
+        Course.CreateDate = DateTime.UtcNow;
+        Course.UpdateDate = DateTime.UtcNow;
         DB.SMS_Courses.Add(Course);
         await DB.SaveChangesAsync();
         NavigationManager.NavigateTo("/courses");

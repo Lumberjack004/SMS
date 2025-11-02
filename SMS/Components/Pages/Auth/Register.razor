@@ -10,88 +10,72 @@
 
 <PageTitle>注册</PageTitle>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center">注册</h3>
-                </div>
-                <div class="card-body">
-                    @if (!string.IsNullOrEmpty(_errorMessage))
-                    {
-                        <div class="alert alert-danger">
-                            @_errorMessage
-                        </div>
-                    }
-                    
-                    <form @onsubmit="HandleSubmit" @onsubmit:preventDefault="true">
-                        <!-- 移除了 AntiforgeryToken，因为我们使用 Blazor 客户端处理 -->
-                        <div class="form-group mb-3">
-                            <label for="username">用户名</label>
-                            <input type="text" id="username" name="username" class="form-control" 
-                                   autocomplete="username"
-                                   @bind="_registerModel.Username" />
-                            @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.Username))))
-                            {
-                                <div class="text-danger">@GetValidationError(nameof(_registerModel.Username))</div>
-                            }
-                        </div>
+<AntDesign.Row style="margin-top: 80px; justify-content: center;">
+    <AntDesign.Col Span="8">
+        <AntDesign.Card>
+            <TitleTemplate>
+                <h3 style="text-align: center; margin: 0;">注册</h3>
+            </TitleTemplate>
+            <Body>
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <AntDesign.Alert Type="@AntDesign.AlertType.Error" Message="@_errorMessage" ShowIcon="true" style="margin-bottom: 16px;" />
+                }
+                
+                <AntDesign.Form Model="@_registerModel" Layout="@AntDesign.FormLayout.Vertical" OnFinish="OnFormFinish">
+                    <AntDesign.FormItem Label="用户名">
+                        <AntDesign.Input @bind-Value="@_registerModel.Username" />
+                        @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.Username))))
+                        {
+                            <div style="color: #ff4d4f; font-size: 14px; margin-top: 4px;">@GetValidationError(nameof(_registerModel.Username))</div>
+                        }
+                    </AntDesign.FormItem>
 
-                        <div class="form-group mb-3">
-                            <label for="email">电子邮箱</label>
-                            <input type="email" id="email" name="email" class="form-control" 
-                                   autocomplete="email"
-                                   @bind="_registerModel.Email" />
-                            @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.Email))))
-                            {
-                                <div class="text-danger">@GetValidationError(nameof(_registerModel.Email))</div>
-                            }
-                        </div>
+                    <AntDesign.FormItem Label="电子邮箱">
+                        <AntDesign.Input @bind-Value="@_registerModel.Email" Type="@AntDesign.InputType.Email" />
+                        @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.Email))))
+                        {
+                            <div style="color: #ff4d4f; font-size: 14px; margin-top: 4px;">@GetValidationError(nameof(_registerModel.Email))</div>
+                        }
+                    </AntDesign.FormItem>
 
-                        <div class="form-group mb-3">
-                            <label for="password">密码</label>
-                            <input type="password" id="password" name="password" class="form-control" 
-                                   autocomplete="new-password"
-                                   @bind="_registerModel.Password" />
-                            @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.Password))))
-                            {
-                                <div class="text-danger">@GetValidationError(nameof(_registerModel.Password))</div>
-                            }
-                        </div>
+                    <AntDesign.FormItem Label="密码">
+                        <AntDesign.InputPassword @bind-Value="@_registerModel.Password" />
+                        @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.Password))))
+                        {
+                            <div style="color: #ff4d4f; font-size: 14px; margin-top: 4px;">@GetValidationError(nameof(_registerModel.Password))</div>
+                        }
+                    </AntDesign.FormItem>
 
-                        <div class="form-group mb-3">
-                            <label for="confirmPassword">确认密码</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" 
-                                   autocomplete="new-password"
-                                   @bind="_registerModel.ConfirmPassword" />
-                            @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.ConfirmPassword))))
-                            {
-                                <div class="text-danger">@GetValidationError(nameof(_registerModel.ConfirmPassword))</div>
-                            }
-                        </div>
+                    <AntDesign.FormItem Label="确认密码">
+                        <AntDesign.InputPassword @bind-Value="@_registerModel.ConfirmPassword" />
+                        @if (!string.IsNullOrEmpty(GetValidationError(nameof(_registerModel.ConfirmPassword))))
+                        {
+                            <div style="color: #ff4d4f; font-size: 14px; margin-top: 4px;">@GetValidationError(nameof(_registerModel.ConfirmPassword))</div>
+                        }
+                    </AntDesign.FormItem>
 
-                        <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@_isSubmitting">
+                    <AntDesign.FormItem>
+                        <AntDesign.Button Type="@AntDesign.ButtonType.Primary" HtmlType="submit" Block="true" Size="@AntDesign.ButtonSize.Large" Loading="@_isSubmitting">
                             @if (_isSubmitting)
                             {
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                <span class="ms-2">注册中...</span>
+                                <span>注册中...</span>
                             }
                             else
                             {
                                 <span>注册</span>
                             }
-                        </button>
-                        
-                        <div class="text-center">
-                            <p>已有账号？ <a href="/login">立即登录</a></p>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                        </AntDesign.Button>
+                    </AntDesign.FormItem>
+                    
+                    <div style="text-align: center; margin-top: 16px;">
+                        <span>已有账号？ <a href="/login">立即登录</a></span>
+                    </div>
+                </AntDesign.Form>
+            </Body>
+        </AntDesign.Card>
+    </AntDesign.Col>
+</AntDesign.Row>
 
 @code {
     private string currentUser = string.Empty;
@@ -165,6 +149,11 @@
         }
     }
 
+    private async Task OnFormFinish()
+    {
+        await HandleSubmit();
+    }
+
     private async Task HandleSubmit()
     {
         if (_isSubmitting) 
@@ -190,7 +179,7 @@
             currentUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser") ?? string.Empty;
 
             // 检查用户名是否已存在
-            var existingUsername = await context.Users.AnyAsync(u => u.Username == _registerModel.Username);
+            var existingUsername = await context.SMS_Users.AnyAsync(u => u.Username == _registerModel.Username);
             if (existingUsername)
             {
                 _errorMessage = "用户名已被使用";
@@ -200,7 +189,7 @@
             }
 
             // 检查邮箱是否已存在
-            var existingEmail = await context.Users.AnyAsync(u => u.Email == _registerModel.Email);
+            var existingEmail = await context.SMS_Users.AnyAsync(u => u.Email == _registerModel.Email);
             if (existingEmail)
             {
                 _errorMessage = "邮箱已被使用";
@@ -215,15 +204,14 @@
                 Username = _registerModel.Username,
                 Email = _registerModel.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(_registerModel.Password),
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true,
+                // 已删除的数据库字段
                 CreateUser = string.IsNullOrEmpty(currentUser) ? _registerModel.Username : currentUser,
                 UpdateUser = string.IsNullOrEmpty(currentUser) ? _registerModel.Username : currentUser
             };
 
             try
             {
-                context.Users.Add(user);
+                context.SMS_Users.Add(user);
                 await context.SaveChangesAsync();
                 
                 // 注册成功后重定向到登录页面

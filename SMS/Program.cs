@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// 添加Ant Design服务
+builder.Services.AddAntDesign();
+
 // 配置HTTPS
 builder.Services.AddHttpsRedirection(options =>
 {
@@ -37,7 +40,7 @@ app.UseStaticFiles();
 
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
+app.MapRazorComponents<SMS.Components.App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();

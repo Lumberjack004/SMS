@@ -1,0 +1,139 @@
+@page "/enrollment-management"
+@using AntDesign
+@using Microsoft.AspNetCore.Components
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>选课管理</PageTitle>
+
+<style>
+    .management-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+    
+    .management-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-title-link {
+        text-decoration: none !important;
+        color: #495057 !important;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+    
+    .card-title-link:hover {
+        color: #007bff !important;
+    }
+    
+    .management-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+    }
+    
+    .card-content {
+        text-align: center;
+        padding: 32px;
+    }
+    
+    .feature-list {
+        margin-top: 16px;
+        text-align: left;
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .feature-item {
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .feature-icon {
+        margin-right: 8px;
+        color: #52c41a;
+    }
+</style>
+
+<div style="padding: 24px; max-width: 1200px; margin: 0 auto;">
+    <!-- 面包屑导航 -->
+    <AntDesign.Breadcrumb style="margin-bottom: 24px;">
+        <BreadcrumbItem>
+            <a href="/directory">目录</a>
+        </BreadcrumbItem>
+        <BreadcrumbItem>选课管理</BreadcrumbItem>
+    </AntDesign.Breadcrumb>
+
+    <AntDesign.Row Gutter="32" style="justify-content: center;">
+        <!-- 学生选课卡片 -->
+        <AntDesign.Col Xs="24" Sm="12" Lg="8">
+            <div class="management-card" @onclick="() => NavigateToStudentEnrollment()">
+                <AntDesign.Card Bordered="false" style="height: 100%; background: transparent;">
+                    <Body>
+                        <div class="card-content">
+                            <Icon Type="user" Theme="@IconThemeType.Outline" 
+                                  class="management-icon" 
+                                  style="color: #1890ff;" />
+                            <h3 style="margin: 0; color: #1f1f1f; font-weight: 600;">学生课程管理</h3>
+                        </div>
+                    </Body>
+                </AntDesign.Card>
+            </div>
+        </AntDesign.Col>
+        
+        <!-- 教师选课管理卡片 -->
+        <AntDesign.Col Xs="24" Sm="12" Lg="8">
+            <div class="management-card" @onclick="() => NavigateToTeacherEnrollment()">
+                <AntDesign.Card Bordered="false" style="height: 100%; background: transparent;">
+                    <Body>
+                        <div class="card-content">
+                            <Icon Type="team" Theme="@IconThemeType.Outline" 
+                                  class="management-icon" 
+                                  style="color: #52c41a;" />
+                            <h3 style="margin: 0; color: #1f1f1f; font-weight: 600;">教师课程管理</h3>
+                        </div>
+                    </Body>
+                </AntDesign.Card>
+            </div>
+        </AntDesign.Col>
+
+        <!-- 管理员选课管理卡片 -->
+        <AntDesign.Col Xs="24" Sm="12" Lg="8">
+            <div class="management-card" @onclick="() => NavigateToAdminEnrollment()">
+                <AntDesign.Card Bordered="false" style="height: 100%; background: transparent;">
+                    <Body>
+                        <div class="card-content">
+                            <Icon Type="crown" Theme="@IconThemeType.Outline" 
+                                  class="management-icon" 
+                                  style="color: #fa8c16;" />
+                            <h3 style="margin: 0; color: #1f1f1f; font-weight: 600;">管理员选课管理</h3>
+                        </div>
+                    </Body>
+                </AntDesign.Card>
+            </div>
+        </AntDesign.Col>
+    </AntDesign.Row>
+</div>
+
+@code {
+    private void NavigateToStudentEnrollment()
+    {
+        Navigation.NavigateTo("/student-enrollment");
+    }
+    
+    private void NavigateToTeacherEnrollment()  
+    {
+        Navigation.NavigateTo("/teacher-enrollment");
+    }
+    
+    private void NavigateToAdminEnrollment()
+    {
+        Navigation.NavigateTo("/admin-enrollment");
+    }
+}

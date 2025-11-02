@@ -1,0 +1,534 @@
+@page "/student-enrollment"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components
+@inject SMS.CimContext DB
+@using SMS.Models
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<PageTitle>学生课程管理</PageTitle>
+
+<div style="padding: 24px;">
+    <!-- 面包屑导航 -->
+    <AntDesign.Breadcrumb style="margin-bottom: 24px;">
+        <BreadcrumbItem>
+            <a href="/directory">目录</a>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+            <a href="/enrollment-management">选课管理</a>
+        </BreadcrumbItem>
+        <BreadcrumbItem>学生课程管理</BreadcrumbItem>
+    </AntDesign.Breadcrumb>
+
+    <h1><Icon Type="user" /> 学生课程管理</h1>
+    <p style="color: #666;">选择学生，查看和管理选课，查看成绩</p>
+
+    <!-- 学生选择 -->
+    <div style="margin-bottom: 24px; padding: 16px; border: 1px solid #f0f0f0; border-radius: 6px;">
+        <h3>选择学生</h3>
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <select @bind="selectedStudentSID" style="padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px; min-width: 200px;">
+                <option value="0">请选择学生</option>
+                @if (students != null)
+                {
+                    @foreach (var student in students)
+                    {
+                        <option value="@student.SID">@student.Name (学号: @student.SID)</option>
+                    }
+                }
+            </select>
+            <button @onclick="LoadStudentData" disabled="@(selectedStudentSID == 0)" 
+                    style="padding: 8px 16px; background: #1890ff; color: white; border: none; border-radius: 4px; cursor: @(selectedStudentSID == 0 ? "not-allowed" : "pointer");">
+                加载数据
+            </button>
+        </div>
+    </div>
+
+    @if (selectedStudentSID > 0)
+    {
+        <!-- 标签页导航 -->
+        <div style="border-bottom: 1px solid #f0f0f0; margin-bottom: 24px;">
+            <div style="display: flex; gap: 0;">
+                <button @onclick="() => activeTab = 0" 
+                        style="padding: 12px 24px; border: none; border-bottom: 2px solid @(activeTab == 0 ? "#1890ff" : "transparent"); background: transparent; cursor: pointer; font-weight: @(activeTab == 0 ? "600" : "normal"); color: @(activeTab == 0 ? "#1890ff" : "#666");">
+                    选课管理
+                </button>
+                <button @onclick="() => activeTab = 1" 
+                        style="padding: 12px 24px; border: none; border-bottom: 2px solid @(activeTab == 1 ? "#1890ff" : "transparent"); background: transparent; cursor: pointer; font-weight: @(activeTab == 1 ? "600" : "normal"); color: @(activeTab == 1 ? "#1890ff" : "#666");">
+                    成绩查看
+                </button>
+            </div>
+        </div>
+        
+        @if (activeTab == 0)
+        {
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <!-- 可选课程 -->
+            <div style="border: 1px solid #f0f0f0; border-radius: 6px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0;">可选课程</h3>
+                    <button @onclick="RefreshCourses" style="padding: 4px 8px; background: #f0f0f0; border: 1px solid #d9d9d9; border-radius: 4px;">刷新</button>
+                </div>
+                
+                <input @bind="courseSearchText" @onkeypress="@((e) => { if (e.Key == "Enter") SearchCourses(); })"
+                       placeholder="搜索课程名称或教师" style="width: 100%; padding: 8px; margin-bottom: 16px; border: 1px solid #d9d9d9; border-radius: 4px;" />
+                
+                @if (availableCourses == null)
+                {
+                    <div style="text-align: center; padding: 48px;">加载中...</div>
+                }
+                else
+                {
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                        <thead>
+                            <tr style="background: #fafafa;">
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 1px solid #f0f0f0;">课程</th>
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 1px solid #f0f0f0;">教师</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0;">学分</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0;">课程状态</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var course in availableCourses)
+                            {
+                                <tr style="border-bottom: 1px solid #f5f5f5;">
+                                    <td style="padding: 12px 8px;">
+                                        <div style="font-weight: 500;">@course.Name</div>
+                                        <div style="color: #999; font-size: 12px;">@course.CID</div>
+                                    </td>
+                                    <td style="padding: 12px 8px;">@(course.Teacher?.Name ?? "待分配")</td>
+                                    <td style="padding: 12px 8px; text-align: center;">@course.Credits</td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        @switch (course.CourseStatus)
+                                        {
+                                            case CourseStatus.未开课:
+                                                <span style="color: #faad14; background: #fffbe6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">未开课</span>
+                                                break;
+                                            case CourseStatus.正在进行:
+                                                <span style="color: #52c41a; background: #f6ffed; padding: 2px 6px; border-radius: 4px; font-size: 12px;">正在进行</span>
+                                                break;
+                                            case CourseStatus.已结束:
+                                                <span style="color: #8c8c8c; background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px;">已结束</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        @{
+                                            var isEnrolled = studentEnrollments?.Any(e => e.CourseCID == course.CID && e.Status == "Active") ?? false;
+                                            var canEnroll = course.CourseStatus == CourseStatus.未开课 && selectedStudentSID > 0;
+                                        }
+                                        @if (isEnrolled)
+                                        {
+                                            <span style="background: #f6ffed; color: #52c41a; padding: 4px 8px; border-radius: 4px; font-size: 12px;">已选</span>
+                                        }
+                                        else if (canEnroll)
+                                        {
+                                            <button @onclick="() => EnrollCourse(course.CID)" 
+                                                    style="padding: 4px 12px; background: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                                选课
+                                            </button>
+                                        }
+                                        else if (course.CourseStatus != CourseStatus.未开课)
+                                        {
+                                            <span style="background: #f5f5f5; color: #8c8c8c; padding: 4px 8px; border-radius: 4px; font-size: 12px;">不可选</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="background: #f5f5f5; color: #8c8c8c; padding: 4px 8px; border-radius: 4px; font-size: 12px;">请选择学生</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            <!-- 已选课程 -->
+            <div style="border: 1px solid #f0f0f0; border-radius: 6px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0;">我的课程</h3>
+                    <button @onclick="RefreshEnrollments" style="padding: 4px 8px; background: #f0f0f0; border: 1px solid #d9d9d9; border-radius: 4px;">刷新</button>
+                </div>
+                
+                @if (studentEnrollments == null)
+                {
+                    <div style="text-align: center; padding: 48px;">加载中...</div>
+                }
+                else if (!studentEnrollments.Any())
+                {
+                    <div style="text-align: center; padding: 48px; color: #999;">
+                        还没有选课，快去选择您感兴趣的课程吧！
+                    </div>
+                }
+                else
+                {
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                        <thead>
+                            <tr style="background: #fafafa;">
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 1px solid #f0f0f0;">课程</th>
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 1px solid #f0f0f0;">教师</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0;">学分</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0;">状态</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0;">成绩</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var enrollment in studentEnrollments)
+                            {
+                                <tr style="border-bottom: 1px solid #f5f5f5;">
+                                    <td style="padding: 12px 8px;">
+                                        <div style="font-weight: 500;">@enrollment.Course?.Name</div>
+                                        <div style="color: #999; font-size: 12px;">@enrollment.Course?.CID</div>
+                                    </td>
+                                    <td style="padding: 12px 8px;">@(enrollment.Course?.Teacher?.Name ?? "待分配")</td>
+                                    <td style="padding: 12px 8px; text-align: center;">@enrollment.Course?.Credits</td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        @{
+                                            var statusColor = enrollment.Status switch
+                                            {
+                                                "Active" => "#1890ff",
+                                                "Completed" => "#52c41a", 
+                                                "Dropped" => "#f5222d",
+                                                _ => "#666"
+                                            };
+                                            var statusText = enrollment.Status switch
+                                            {
+                                                "Active" => "进行中",
+                                                "Completed" => "已完成",
+                                                "Dropped" => "已退课", 
+                                                _ => enrollment.Status
+                                            };
+                                        }
+                                        <span style="background: @statusColor; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">@statusText</span>
+                                    </td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        @if (enrollment.Grade.HasValue)
+                                        {
+                                            <span style="color: @(enrollment.Grade >= 60 ? "#52c41a" : "#f5222d"); font-weight: 500;">
+                                                @enrollment.Grade.Value.ToString("F1")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: #999;">-</span>
+                                        }
+                                    </td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        @if (enrollment.Status == "Active")
+                                        {
+                                            <button @onclick="() => DropCourse(enrollment.Id)" 
+                                                    style="padding: 4px 12px; background: #ff4d4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                                退课
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: #ccc;">-</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+        }
+        
+        @if (activeTab == 1)
+        {
+            <!-- 成绩查看 -->
+            <div style="border: 1px solid #f0f0f0; border-radius: 6px; padding: 16px;">
+                <h3 style="margin-bottom: 16px;">成绩查看</h3>
+                
+                @if (studentEnrollments == null)
+                {
+                    <div style="text-align: center; padding: 48px;">加载中...</div>
+                }
+                else if (!studentEnrollments.Any())
+                {
+                    <div style="text-align: center; padding: 48px; color: #999;">该学生暂无选课记录</div>
+                }
+                else
+                {
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #fafafa;">
+                                <th style="padding: 12px; text-align: left; border: 1px solid #f0f0f0;">课程名称</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #f0f0f0;">课程编号</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #f0f0f0;">授课教师</th>
+                                <th style="padding: 12px; text-align: center; border: 1px solid #f0f0f0;">学分</th>
+                                <th style="padding: 12px; text-align: center; border: 1px solid #f0f0f0;">课程状态</th>
+                                <th style="padding: 12px; text-align: center; border: 1px solid #f0f0f0;">成绩</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var enrollment in studentEnrollments.Where(e => e.Grade.HasValue))
+                            {
+                                <tr style="border-bottom: 1px solid #f5f5f5;">
+                                    <td style="padding: 12px; border: 1px solid #f0f0f0;">
+                                        <div style="font-weight: 500;">@(enrollment.Course?.Name ?? "未知课程")</div>
+                                    </td>
+                                    <td style="padding: 12px; border: 1px solid #f0f0f0;">@enrollment.CourseCID</td>
+                                    <td style="padding: 12px; border: 1px solid #f0f0f0;">@(enrollment.Course?.Teacher?.Name ?? "未分配")</td>
+                                    <td style="padding: 12px; text-align: center; border: 1px solid #f0f0f0;">@(enrollment.Course?.Credits ?? 0)</td>
+                                    <td style="padding: 12px; text-align: center; border: 1px solid #f0f0f0;">
+                                        @{
+                                            var courseStatusText = enrollment.Course?.CourseStatus switch
+                                            {
+                                                CourseStatus.未开课 => "未开课",
+                                                CourseStatus.正在进行 => "进行中",
+                                                CourseStatus.已结束 => "已结束",
+                                                _ => "未知"
+                                            };
+                                            var courseStatusColor = enrollment.Course?.CourseStatus switch
+                                            {
+                                                CourseStatus.未开课 => "#faad14",
+                                                CourseStatus.正在进行 => "#1890ff",
+                                                CourseStatus.已结束 => "#52c41a",
+                                                _ => "#666"
+                                            };
+                                        }
+                                        <span style="background: @courseStatusColor; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">@courseStatusText</span>
+                                    </td>
+                                    <td style="padding: 12px; text-align: center; border: 1px solid #f0f0f0;">
+                                        <span style="color: @(enrollment.Grade >= 60 ? "#52c41a" : "#f5222d"); font-weight: 500; font-size: 16px;">
+                                            @(enrollment.Grade?.ToString("F1") ?? "0")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    
+                    @if (!studentEnrollments.Any(e => e.Grade.HasValue))
+                    {
+                        <div style="text-align: center; padding: 48px; color: #999;">暂无已录入的成绩</div>
+                    }
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    // 学生相关
+    private List<Student>? students;
+    private int selectedStudentSID = 0;
+    private List<Enrollment>? studentEnrollments;
+    
+    // 标签页控制
+    private int activeTab = 0; // 0: 选课管理, 1: 成绩查看
+    
+    // 课程相关
+    private List<Course>? availableCourses;
+    private List<Course>? allCourses;
+    private string courseSearchText = "";
+    
+
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudents();
+        await LoadAllCourses();
+    }
+    
+    private async Task LoadStudents()
+    {
+        students = await DB.SMS_Students.OrderBy(s => s.Name).ToListAsync();
+        StateHasChanged();
+    }
+    
+    private async Task LoadAllCourses()
+    {
+        allCourses = await DB.SMS_Courses
+            .Include(c => c.Teacher)
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+        availableCourses = allCourses;
+        StateHasChanged();
+    }
+    
+    private async Task OnStudentChanged()
+    {
+        if (selectedStudentSID > 0)
+        {
+            await LoadStudentData();
+        }
+    }
+    
+    private async Task LoadStudentData()
+    {
+        if (selectedStudentSID == 0) return;
+        
+        try
+        {
+            // 加载学生的选课记录
+            studentEnrollments = await DB.SMS_Enrollments
+                .Include(e => e.Course)
+                .ThenInclude(c => c!.Teacher)
+                .Where(e => e.StudentSID == selectedStudentSID)
+                .OrderByDescending(e => e.CreateDate)
+                .ToListAsync();
+            
+            // 更新可选课程列表
+            UpdateAvailableCourses();
+            
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"加载学生数据失败: {ex.Message}");
+        }
+    }
+    
+    private void UpdateAvailableCourses()
+    {
+        if (allCourses == null || studentEnrollments == null) return;
+        
+        var enrolledCourseIds = studentEnrollments
+            .Where(e => e.Status == "Active")
+            .Select(e => e.CourseCID)
+            .ToHashSet();
+        
+        availableCourses = allCourses
+            .Where(c => !enrolledCourseIds.Contains(c.CID))
+            .ToList();
+    }
+    
+    private void SearchCourses()
+    {
+        if (allCourses == null) return;
+        
+        if (string.IsNullOrWhiteSpace(courseSearchText))
+        {
+            UpdateAvailableCourses();
+        }
+        else
+        {
+            var filtered = allCourses
+                .Where(c => c.Name!.Contains(courseSearchText, StringComparison.OrdinalIgnoreCase) ||
+                           (c.Teacher?.Name?.Contains(courseSearchText, StringComparison.OrdinalIgnoreCase) ?? false))
+                .ToList();
+            
+            if (studentEnrollments != null)
+            {
+                var enrolledCourseIds = studentEnrollments
+                    .Where(e => e.Status == "Active")
+                    .Select(e => e.CourseCID)
+                    .ToHashSet();
+                
+                availableCourses = filtered
+                    .Where(c => !enrolledCourseIds.Contains(c.CID))
+                    .ToList();
+            }
+            else
+            {
+                availableCourses = filtered;
+            }
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task EnrollCourse(int courseCID)
+    {
+        if (selectedStudentSID == 0) return;
+        
+        try
+        {
+            // 检查课程状态
+            var course = await DB.SMS_Courses.FirstOrDefaultAsync(c => c.CID == courseCID);
+            if (course == null)
+            {
+                await JS.InvokeVoidAsync("alert", "课程不存在");
+                return;
+            }
+            
+            if (course.CourseStatus != CourseStatus.未开课)
+            {
+                await JS.InvokeVoidAsync("alert", "只能选择未开课状态的课程");
+                return;
+            }
+            
+            // 检查是否已经选过这门课
+            var exists = await DB.SMS_Enrollments.AnyAsync(e => 
+                e.StudentSID == selectedStudentSID && 
+                e.CourseCID == courseCID && 
+                e.Status == "Active");
+            
+            if (exists)
+            {
+                await JS.InvokeVoidAsync("alert", "您已经选择了这门课程");
+                return;
+            }
+            
+            // 获取下一个EID
+            var maxEID = await DB.SMS_Enrollments.MaxAsync(e => (int?)e.EID) ?? 0;
+            
+            // 创建选课记录
+            var enrollment = new Enrollment
+            {
+                EID = maxEID + 1,
+                StudentSID = selectedStudentSID,
+                CourseCID = courseCID,
+                Status = "Active",
+                Semester = DateTime.Now.Year + (DateTime.Now.Month <= 6 ? "春季" : "秋季"),
+                CreateDate = DateTime.UtcNow,
+                UpdateDate = DateTime.UtcNow
+            };
+            
+            DB.SMS_Enrollments.Add(enrollment);
+            await DB.SaveChangesAsync();
+            
+            await LoadStudentData();
+            await JS.InvokeVoidAsync("alert", "选课成功！");
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"选课失败: {ex.Message}");
+        }
+    }
+    
+    private async Task DropCourse(int enrollmentId)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "确定要退选这门课程吗？");
+        if (!confirmed) return;
+        
+        try
+        {
+            var enrollment = await DB.SMS_Enrollments.FindAsync(enrollmentId);
+            if (enrollment != null)
+            {
+                enrollment.Status = "Dropped";
+                enrollment.UpdateDate = DateTime.UtcNow;
+                
+                await DB.SaveChangesAsync();
+                await LoadStudentData();
+                await JS.InvokeVoidAsync("alert", "退课成功");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"退课失败: {ex.Message}");
+        }
+    }
+    
+    private async Task RefreshCourses()
+    {
+        await LoadAllCourses();
+        UpdateAvailableCourses();
+        await JS.InvokeVoidAsync("alert", "课程列表已刷新");
+    }
+    
+    private async Task RefreshEnrollments()
+    {
+        await LoadStudentData();
+        await JS.InvokeVoidAsync("alert", "选课记录已刷新");
+    }
+}

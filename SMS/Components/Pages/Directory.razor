@@ -1,6 +1,8 @@
 @page "/directory"
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
+@using AntDesign
+@using Microsoft.AspNetCore.Components
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
 
@@ -62,71 +64,89 @@
     }
 </style>
 
-<h1 style="color: #333; margin-bottom: 30px; text-align: center; font-weight: 600;">功能目录</h1>
+<h1 style="text-align: center; margin-bottom: 30px;">功能目录</h1>
 
-<div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card management-card">
-                <div class="card-body" style="padding: 30px 20px;">
-                    <div class="card-content">
-                        <div class="favorite-star" id="star-students" @onclick="@((e) => ToggleFavorite("students"))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
-                             style="color: @GetStarColor("students");"
-                             title="收藏">
-                            @GetStarIcon("students")
-                        </div>
-                        <a href="/students" class="card-title-link" style="flex: 1;">
-                            <div class="card-text-content">
-                                <div class="management-icon">👥</div>
-                                <h5 style="margin: 0; font-size: 1.25rem;">学生管理</h5>
-                            </div>
-                        </a>
+<AntDesign.Row Gutter="24" style="justify-content: center;">
+    <AntDesign.Col Xs="24" Sm="12" Md="8">
+        <AntDesign.Card Hoverable="true" style="margin-bottom: 24px;">
+            <Body>
+                <div style="display: flex; align-items: center;">
+                    <div class="favorite-star" id="star-students" @onclick="@((e) => ToggleFavorite("students"))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
+                         style="color: @GetStarColor("students"); font-size: 32px; cursor: pointer; margin-right: 16px;"
+                         title="收藏">
+                        @GetStarIcon("students")
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card management-card">
-                <div class="card-body" style="padding: 30px 20px;">
-                    <div class="card-content">
-                        <div class="favorite-star" id="star-teachers" @onclick="@((e) => ToggleFavorite("teachers"))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
-                             style="color: @GetStarColor("teachers");"
-                             title="收藏">
-                            @GetStarIcon("teachers")
+                    <a href="/students" style="flex: 1; text-decoration: none; color: inherit;">
+                        <div style="display: flex; align-items: center;">
+                            <Icon Type="idcard" Theme="@IconThemeType.Outline" style="font-size: 2rem; margin-right: 12px; color: #1890ff;" />
+                            <h4 style="margin: 0;">学生管理</h4>
                         </div>
-                        <a href="/teachers" class="card-title-link" style="flex: 1;">
-                            <div class="card-text-content">
-                                <div class="management-icon">👨‍🏫</div>
-                                <h5 style="margin: 0; font-size: 1.25rem;">教师管理</h5>
-                            </div>
-                        </a>
-                    </div>
+                    </a>
                 </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card management-card">
-                <div class="card-body" style="padding: 30px 20px;">
-                    <div class="card-content">
-                        <div class="favorite-star" id="star-courses" @onclick="@((e) => ToggleFavorite("courses"))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
-                             style="color: @GetStarColor("courses");"
-                             title="收藏">
-                            @GetStarIcon("courses")
+            </Body>
+        </AntDesign.Card>
+    </AntDesign.Col>
+    
+    <AntDesign.Col Xs="24" Sm="12" Md="8">
+        <AntDesign.Card Hoverable="true" style="margin-bottom: 24px;">
+            <Body>
+                <div style="display: flex; align-items: center;">
+                    <div class="favorite-star" id="star-teachers" @onclick="@((e) => ToggleFavorite("teachers"))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
+                         style="color: @GetStarColor("teachers"); font-size: 32px; cursor: pointer; margin-right: 16px;"
+                         title="收藏">
+                        @GetStarIcon("teachers")
+                    </div>
+                    <a href="/teachers" style="flex: 1; text-decoration: none; color: inherit;">
+                        <div style="display: flex; align-items: center;">
+                            <Icon Type="read" Theme="@IconThemeType.Outline" style="font-size: 2rem; margin-right: 12px; color: #1890ff;" />
+                            <h4 style="margin: 0;">教师管理</h4>
                         </div>
-                        <a href="/courses" class="card-title-link" style="flex: 1;">
-                            <div class="card-text-content">
-                                <div class="management-icon">📚</div>
-                                <h5 style="margin: 0; font-size: 1.25rem;">课程管理</h5>
-                            </div>
-                        </a>
-                    </div>
+                    </a>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+            </Body>
+        </AntDesign.Card>
+    </AntDesign.Col>
+    
+    <AntDesign.Col Xs="24" Sm="12" Md="8">
+        <AntDesign.Card Hoverable="true" style="margin-bottom: 24px;">
+            <Body>
+                <div style="display: flex; align-items: center;">
+                    <div class="favorite-star" id="star-courses" @onclick="@((e) => ToggleFavorite("courses"))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
+                         style="color: @GetStarColor("courses"); font-size: 32px; cursor: pointer; margin-right: 16px;"
+                         title="收藏">
+                        @GetStarIcon("courses")
+                    </div>
+                    <a href="/courses" style="flex: 1; text-decoration: none; color: inherit;">
+                        <div style="display: flex; align-items: center;">
+                            <Icon Type="book" Theme="@IconThemeType.Outline" style="font-size: 2rem; margin-right: 12px; color: #1890ff;" />
+                            <h4 style="margin: 0;">课程管理</h4>
+                        </div>
+                    </a>
+                </div>
+            </Body>
+        </AntDesign.Card>
+    </AntDesign.Col>
+    
+    <AntDesign.Col Xs="24" Sm="12" Md="8">
+        <AntDesign.Card Hoverable="true" style="margin-bottom: 24px;">
+            <Body>
+                <div style="display: flex; align-items: center;">
+                    <div class="favorite-star" id="star-enrollments" @onclick="@((e) => ToggleFavorite("enrollments"))" @onclick:preventDefault="true" @onclick:stopPropagation="true"
+                         style="color: @GetStarColor("enrollments"); font-size: 32px; cursor: pointer; margin-right: 16px;"
+                         title="收藏">
+                        @GetStarIcon("enrollments")
+                    </div>
+                    <a href="/enrollment-management" style="flex: 1; text-decoration: none; color: inherit;">
+                        <div style="display: flex; align-items: center;">
+                            <Icon Type="team" Theme="@IconThemeType.Outline" style="font-size: 2rem; margin-right: 12px; color: #1890ff;" />
+                            <h4 style="margin: 0;">选课管理</h4>
+                        </div>
+                    </a>
+                </div>
+            </Body>
+        </AntDesign.Card>
+    </AntDesign.Col>
+</AntDesign.Row>
 
 @code {
     private List<string> favorites = new List<string>();

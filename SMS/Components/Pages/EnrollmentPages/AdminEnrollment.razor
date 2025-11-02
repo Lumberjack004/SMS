@@ -1,0 +1,537 @@
+@page "/admin-enrollment"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
+@using SMS.Models
+@using AntDesign
+@inject SMS.CimContext DB
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>管理员课程管理</PageTitle>
+
+<div style="padding: 24px;">
+    <!-- 面包屑导航 -->
+    <nav style="margin-bottom: 16px; padding: 8px 0;">
+        <ol style="list-style: none; padding: 0; margin: 0; display: flex; align-items: center; color: #666; font-size: 14px;">
+            <li>
+                <a href="/" style="color: #1890ff; text-decoration: none;">首页</a>
+            </li>
+            <li style="margin: 0 8px; color: #8c8c8c;">/</li>
+            <li>
+                <a href="/enrollment-management" style="color: #1890ff; text-decoration: none;">课程管理</a>
+            </li>
+            <li style="margin: 0 8px; color: #8c8c8c;">/</li>
+            <li style="color: #8c8c8c;">管理员课程管理</li>
+        </ol>
+    </nav>
+    
+    <h1><Icon Type="crown" style="color: #faad14;" /> 管理员课程管理</h1>
+    <p style="color: #666; margin-bottom: 24px;">管理课程状态，审批学生和教师的选课申请</p>
+
+    <!-- 标签页导航 -->
+    <div style="border-bottom: 2px solid #f0f0f0; margin-bottom: 24px;">
+        <div style="display: flex; gap: 32px;">
+            <div style="@GetTabStyle("course-status")" @onclick="@(() => SetActiveTab("course-status"))">
+                <Icon Type="book" style="margin-right: 8px;" /> 课程状态管理
+            </div>
+            <div style="@GetTabStyle("student-approval")" @onclick="@(() => SetActiveTab("student-approval"))">
+                <Icon Type="user" style="margin-right: 8px;" /> 学生选课审批
+            </div>
+            <div style="@GetTabStyle("teacher-assignment")" @onclick="@(() => SetActiveTab("teacher-assignment"))">
+                <Icon Type="team" style="margin-right: 8px;" /> 教师课程分配
+            </div>
+        </div>
+    </div>
+
+    <!-- 课程状态管理 -->
+    @if (activeTab == "course-status")
+    {
+        <div class="tab-content">
+            <h3><Icon Type="book" style="margin-right: 8px;" /> 课程状态管理</h3>
+            
+            @if (courses == null || !courses.Any())
+            {
+                <p>加载中或暂无课程数据...</p>
+            }
+            else
+            {
+                <table style="width: 100%; border-collapse: collapse; margin-top: 16px; border: 1px solid #ddd;">
+                    <thead style="background: #f5f5f5;">
+                        <tr>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">课程名称</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">课程编号</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">学分</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">授课教师</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">课程状态</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var course in courses.Take(10))
+                        {
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;">@course.Name</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">@course.CID</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">@course.Credits</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @if (course.Teacher != null)
+                                    {
+                                        <span>@course.Teacher.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #999;">暂无教师</span>
+                                    }
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @switch (course.CourseStatus)
+                                    {
+                                        case CourseStatus.未开课:
+                                            <span style="color: #faad14; padding: 4px 8px; background: #fff7e6; border-radius: 4px;">未开课</span>
+                                            break;
+                                        case CourseStatus.正在进行:
+                                            <span style="color: #52c41a; padding: 4px 8px; background: #f6ffed; border-radius: 4px;">正在进行</span>
+                                            break;
+                                        case CourseStatus.已结束:
+                                            <span style="color: #8c8c8c; padding: 4px 8px; background: #f5f5f5; border-radius: 4px;">已结束</span>
+                                            break;
+                                    }
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    <button type="button" class="btn btn-sm" style="margin: 2px; background: #1890ff; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                            @onclick="@(() => UpdateCourseStatus(course, CourseStatus.未开课))">未开课</button>
+                                    <button type="button" class="btn btn-sm" style="margin: 2px; background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                            @onclick="@(() => UpdateCourseStatus(course, CourseStatus.正在进行))">正在进行</button>
+                                    <button type="button" class="btn btn-sm" style="margin: 2px; background: #8c8c8c; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                            @onclick="@(() => UpdateCourseStatus(course, CourseStatus.已结束))">已结束</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+
+    <!-- 学生选课审批 -->
+    @if (activeTab == "student-approval")
+    {
+        <div class="tab-content">
+            <h3><Icon Type="user" style="margin-right: 8px;" /> 学生选课申请审批</h3>
+            
+            @if (enrollments == null || !enrollments.Any())
+            {
+                <p>加载中或暂无选课申请...</p>
+            }
+            else
+            {
+                <table style="width: 100%; border-collapse: collapse; margin-top: 16px; border: 1px solid #ddd;">
+                    <thead style="background: #f5f5f5;">
+                        <tr>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">学生姓名</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">学号</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">课程名称</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">课程编号</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">申请状态</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">成绩</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var enrollment in enrollments.Take(10))
+                        {
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;">@(enrollment.Student?.Name ?? "未知学生")</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">@enrollment.StudentSID</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">@(enrollment.Course?.Name ?? "未知课程")</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">@enrollment.CourseCID</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @switch (enrollment.Status)
+                                    {
+                                        case "Active":
+                                            <span style="color: #52c41a; padding: 4px 8px; background: #f6ffed; border-radius: 4px;">已通过</span>
+                                            break;
+                                        case "Pending":
+                                            <span style="color: #faad14; padding: 4px 8px; background: #fff7e6; border-radius: 4px;">待审批</span>
+                                            break;
+                                        case "Rejected":
+                                            <span style="color: #f5222d; padding: 4px 8px; background: #fff2f0; border-radius: 4px;">已拒绝</span>
+                                            break;
+                                        case "Dropped":
+                                            <span style="color: #8c8c8c; padding: 4px 8px; background: #f5f5f5; border-radius: 4px;">已退课</span>
+                                            break;
+                                        default:
+                                            <span style="color: #1890ff; padding: 4px 8px; background: #e6f7ff; border-radius: 4px;">@enrollment.Status</span>
+                                            break;
+                                    }
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @if (enrollment.Grade.HasValue)
+                                    {
+                                        <span>@enrollment.Grade.Value</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #999;">暂无成绩</span>
+                                    }
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @if (enrollment.Status == "Pending")
+                                    {
+                                        <button type="button" style="margin: 2px; background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                                @onclick="@(() => ApproveEnrollment(enrollment))"><Icon Type="check" /> 通过</button>
+                                        <button type="button" style="margin: 2px; background: #f5222d; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                                @onclick="@(() => RejectEnrollment(enrollment))"><Icon Type="close" /> 拒绝</button>
+                                    }
+                                    else if (enrollment.Status == "Active")
+                                    {
+                                        <button type="button" style="margin: 2px; background: #8c8c8c; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                                @onclick="@(() => DropEnrollment(enrollment))"><Icon Type="minus-circle" /> 退课</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+
+    <!-- 教师课程分配管理 -->
+    @if (activeTab == "teacher-assignment")
+    {
+        <div class="tab-content">
+            <h3><Icon Type="team" style="margin-right: 8px;" /> 教师课程分配管理</h3>
+            
+            @if (teacherCourses == null || !teacherCourses.Any())
+            {
+                <p>加载中或暂无教师课程分配...</p>
+            }
+            else
+            {
+                <table style="width: 100%; border-collapse: collapse; margin-top: 16px; border: 1px solid #ddd;">
+                    <thead style="background: #f5f5f5;">
+                        <tr>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">课程名称</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">课程编号</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">学分</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">授课教师</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">工号</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">分配状态</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var course in teacherCourses.Take(10))
+                        {
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;">@course.Name</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">@course.CID</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">@course.Credits</td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @(course.Teacher?.Name ?? "未分配教师")
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @(course.Teacher?.TID.ToString() ?? "N/A")
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    @if (course.TeacherId.HasValue)
+                                    {
+                                        <span style="color: #52c41a; padding: 4px 8px; background: #f6ffed; border-radius: 4px;">已分配</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #faad14; padding: 4px 8px; background: #fff7e6; border-radius: 4px;">未分配</span>
+                                    }
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                                    <button type="button" style="margin: 2px; background: #1890ff; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                            @onclick="@(() => ShowAssignTeacherModal(course))"><Icon Type="user-add" /> 分配教师</button>
+                                    @if (course.TeacherId.HasValue)
+                                    {
+                                        <button type="button" style="margin: 2px; background: #f5222d; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" 
+                                                @onclick="@(() => RemoveTeacherAssignment(course))"><Icon Type="delete" /> 移除分配</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+
+    <!-- 简单的教师分配模态框 -->
+    @if (assignTeacherModalVisible)
+    {
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+            <div style="background: white; padding: 24px; border-radius: 8px; min-width: 400px;">
+                <h4>分配教师</h4>
+                @if (selectedCourse != null)
+                {
+                    <p><strong>课程：</strong>@selectedCourse.Name (@selectedCourse.CID)</p>
+                    <div style="margin: 16px 0;">
+                        <label style="display: block; margin-bottom: 8px;">选择教师:</label>
+                        <select @bind="selectedTeacherId" style="width: 100%; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                            <option value="0">请选择教师</option>
+                            @if (allTeachers != null)
+                            {
+                                @foreach (var teacher in allTeachers)
+                                {
+                                    <option value="@teacher.Id">@teacher.Name (工号: @teacher.TID)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div style="text-align: right; margin-top: 16px;">
+                        <button type="button" style="margin-right: 8px; padding: 8px 16px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; cursor: pointer;" 
+                                @onclick="@(() => assignTeacherModalVisible = false)">取消</button>
+                        <button type="button" style="padding: 8px 16px; background: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                                @onclick="@(ConfirmAssignTeacher)">确定</button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .tab-content {
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-top: 16px;
+    }
+</style>
+
+@code {
+    private string activeTab = "course-status";
+    
+    // 数据列表
+    private List<Course> courses = new();
+    private List<Enrollment> enrollments = new();
+    private List<Course> teacherCourses = new();
+    private List<Teacher> allTeachers = new();
+    
+    // 模态框状态
+    private bool assignTeacherModalVisible = false;
+    private Course? selectedCourse = null;
+    private int selectedTeacherId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            // 加载课程数据
+            courses = await DB.SMS_Courses
+                .Include(c => c.Teacher)
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+
+            // 加载选课申请数据
+            enrollments = await DB.SMS_Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Course)
+                .OrderByDescending(e => e.Id)
+                .ToListAsync();
+
+            // 加载教师课程分配数据
+            teacherCourses = courses; // 复用课程数据
+
+            // 加载所有教师
+            allTeachers = await DB.SMS_Teachers
+                .OrderBy(t => t.Name)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"加载数据失败: {ex.Message}");
+        }
+    }
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+        StateHasChanged();
+    }
+
+    private string GetTabStyle(string tab)
+    {
+        var baseStyle = "padding: 12px 16px; cursor: pointer; border-bottom: 2px solid transparent; color: #666; font-weight: normal;";
+        if (activeTab == tab)
+        {
+            return baseStyle + " color: #1890ff; border-bottom-color: #1890ff; font-weight: 600;";
+        }
+        return baseStyle + " hover: color: #1890ff;";
+    }
+
+    private async Task UpdateCourseStatus(Course course, CourseStatus newStatus)
+    {
+        try
+        {
+            var dbCourse = await DB.SMS_Courses.FindAsync(course.Id);
+            if (dbCourse != null)
+            {
+                dbCourse.CourseStatus = newStatus;
+                await DB.SaveChangesAsync();
+                
+                // 更新本地列表中的状态
+                course.CourseStatus = newStatus;
+                StateHasChanged();
+                
+                await JS.InvokeVoidAsync("alert", $"课程 {course.Name} 状态已更新为 {GetCourseStatusText(newStatus)}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"更新课程状态失败: {ex.Message}");
+        }
+    }
+
+    private async Task ApproveEnrollment(Enrollment enrollment)
+    {
+        try
+        {
+            var dbEnrollment = await DB.SMS_Enrollments.FindAsync(enrollment.Id);
+            if (dbEnrollment != null)
+            {
+                dbEnrollment.Status = "Active";
+                await DB.SaveChangesAsync();
+                
+                enrollment.Status = "Active";
+                StateHasChanged();
+                
+                await JS.InvokeVoidAsync("alert", "选课申请已通过");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"审批失败: {ex.Message}");
+        }
+    }
+
+    private async Task RejectEnrollment(Enrollment enrollment)
+    {
+        try
+        {
+            var dbEnrollment = await DB.SMS_Enrollments.FindAsync(enrollment.Id);
+            if (dbEnrollment != null)
+            {
+                dbEnrollment.Status = "Rejected";
+                await DB.SaveChangesAsync();
+                
+                enrollment.Status = "Rejected";
+                StateHasChanged();
+                
+                await JS.InvokeVoidAsync("alert", "选课申请已拒绝");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"拒绝申请失败: {ex.Message}");
+        }
+    }
+
+    private async Task DropEnrollment(Enrollment enrollment)
+    {
+        try
+        {
+            var dbEnrollment = await DB.SMS_Enrollments.FindAsync(enrollment.Id);
+            if (dbEnrollment != null)
+            {
+                dbEnrollment.Status = "Dropped";
+                await DB.SaveChangesAsync();
+                
+                enrollment.Status = "Dropped";
+                StateHasChanged();
+                
+                await JS.InvokeVoidAsync("alert", "学生已退课");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"退课失败: {ex.Message}");
+        }
+    }
+
+    private void ShowAssignTeacherModal(Course course)
+    {
+        selectedCourse = course;
+        selectedTeacherId = course.TeacherId ?? 0;
+        assignTeacherModalVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task ConfirmAssignTeacher()
+    {
+        try
+        {
+            if (selectedCourse == null || selectedTeacherId == 0)
+            {
+                await JS.InvokeVoidAsync("alert", "请选择要分配的教师");
+                return;
+            }
+
+            var dbCourse = await DB.SMS_Courses.FindAsync(selectedCourse.Id);
+            if (dbCourse != null)
+            {
+                dbCourse.TeacherId = selectedTeacherId;
+                await DB.SaveChangesAsync();
+                
+                // 重新加载数据以更新界面
+                await LoadData();
+                
+                assignTeacherModalVisible = false;
+                selectedCourse = null;
+                selectedTeacherId = 0;
+                
+                await JS.InvokeVoidAsync("alert", "教师分配成功");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"分配教师失败: {ex.Message}");
+        }
+    }
+
+    private async Task RemoveTeacherAssignment(Course course)
+    {
+        try
+        {
+            var dbCourse = await DB.SMS_Courses.FindAsync(course.Id);
+            if (dbCourse != null)
+            {
+                dbCourse.TeacherId = null;
+                await DB.SaveChangesAsync();
+                
+                course.TeacherId = null;
+                course.Teacher = null;
+                StateHasChanged();
+                
+                await JS.InvokeVoidAsync("alert", "教师分配已移除");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"移除分配失败: {ex.Message}");
+        }
+    }
+
+    private string GetCourseStatusText(CourseStatus status)
+    {
+        return status switch
+        {
+            CourseStatus.未开课 => "未开课",
+            CourseStatus.正在进行 => "正在进行",
+            CourseStatus.已结束 => "已结束",
+            _ => status.ToString()
+        };
+    }
+}
